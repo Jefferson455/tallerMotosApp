@@ -1,59 +1,90 @@
-# TallerMotosApp
+# 🏍️ TallerMotosApp
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+Sistema web para la gestión de talleres de motocicletas, enfocado en el control de clientes, vehículos, mantenimientos y recordatorios de servicio.
 
-## Development server
+---
 
-To start a local development server, run:
+## 📌 Descripción
+
+**TallerMotosApp** es una aplicación desarrollada para optimizar la administración de un taller de motos.Su propósito es centralizar procesos importantes como:
+
+- Registro de clientes
+- Gestión de motocicletas
+- Historial de mantenimientos
+- Control de servicios realizados
+- Recordatorios automáticos para próximos mantenimientos
+- Organización de la información del taller en una sola plataforma
+
+Este proyecto busca aportar una solución digital moderna, práctica y escalable para talleres que actualmente manejan su información de forma manual o desorganizada.
+
+---
+
+## 🎯 Objetivo general
+
+Desarrollar un sistema de gestión para talleres de motocicletas que permita administrar clientes, vehículos y mantenimientos, mejorando el control de la información y facilitando la comunicación con los usuarios.
+
+---
+
+## ⚙️ Tecnologías utilizadas
+
+### Frontend
+
+- **Angular**
+- **TypeScript**
+- **SCSS**
+- **HTML5**
+
+### Backend
+
+- **.NET**
+  _Desarrollado por el compañero Jhonnier_
+
+### Control de versiones
+
+- **Git**
+- **GitHub**
+
+---
+
+## 👥 Integrantes del proyecto
+
+- **Jefferson Guzmán** – Frontend con Angular
+- **Jhonnier Castro** – Backend con .NET
+
+---
+
+## 🧱 Estado del proyecto
+
+🚧 Proyecto en fase inicial de desarrollo.
+
+Actualmente se ha realizado:
+
+- Creación del repositorio en GitHub
+- Inicialización del proyecto frontend con Angular
+- Definición de la estructura base del sistema
+
+Próximamente:
+
+- Diseño del módulo de login
+- Conexión con API
+- Estructuración de componentes y vistas
+- Definición de módulos funcionales del sistema
+
+---
+
+## 🌿 Estructura de ramas
+
+Este proyecto manejará una estrategia básica de ramas:
+
+- **main** → rama principal y estable
+- **devserver** → rama de desarrollo e integración de cambios
+
+---
+
+## 🚀 Instalación del proyecto
+
+Clonar el repositorio:
 
 ```bash
-ng serve
+git clone https://github.com/Jefferson455/tallerMotosApp.git
 ```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
