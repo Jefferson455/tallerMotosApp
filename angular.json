@@ -60,6 +60,13 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "tallerMotosApp:build:development",
+            "watch": true,
+            "liveReload": true,
+            "hmr": false,
+            "poll": 1000
+          },
           "configurations": {
             "production": {
               "buildTarget": "tallerMotosApp:build:production"
@@ -68,6 +75,7 @@
               "buildTarget": "tallerMotosApp:build:development"
             }
           },
+
           "defaultConfiguration": "development"
         },
         "test": {
