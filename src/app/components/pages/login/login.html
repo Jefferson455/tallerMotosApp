@@ -17,19 +17,23 @@
           <h2>Sesión</h2>
           <span>Ingresa tus credenciales</span>
         </div>
-        <form action="" class="form-login">
+        <form class="form-login" (ngSubmit)="onLogin();">
           <div class="form-group">
-            <label for="email">Correo o usuario</label>
-            <input id="email" type="text" placeholder="ejemplo@correo.com">
+            <label for="username">Correo o usuario</label>
+            <input id="username" name="username" type="text" placeholder="UserName" [(ngModel)]="username">
           </div>
           <div class="form-group">
             <label for="email">Contraseña</label>
-            <input id="password" type="password" placeholder="*********">
+            <input id="password" name="password" type="password" placeholder="*********" [(ngModel)]="password">
           </div>
+          @if (errorMessage) {
+          <p class="error-message">{{errorMessage}}</p>
+          }
           <div class="form-options">
             <a href="#">Olvidaste tu contraseña?</a>
           </div>
-          <button type="submit" class="btn-submit">Ingresar</button>
+          <button type="submit" class="btn-submit" [disabled]="loading">{{ loading ? 'ingresando...' :
+            'Ingresar'}}</button>
         </form>
       </div>
 
