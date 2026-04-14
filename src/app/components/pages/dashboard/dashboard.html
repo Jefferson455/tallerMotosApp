@@ -1,1 +1,261 @@
-<p>dashboard works!</p>
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="sidebar__top">
+      <div class="sidebar__brand">
+        <div class="sidebar__logo">
+          <img src="/images/brand.png" alt="TallerMotosApp logo">
+        </div>
+
+        <div class="sidebar__brand-text">
+          <h2>Jefferson User</h2>
+          <span>Panel administrativo</span>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a class="sidebar__item sidebar__item--active" href="#">
+          <span class="sidebar__icon">🏠</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a class="sidebar__item" href="#">
+          <span class="sidebar__icon">👥</span>
+          <span>Clientes</span>
+        </a>
+
+        <a class="sidebar__item" href="#">
+          <span class="sidebar__icon">🏍️</span>
+          <span>Motos</span>
+        </a>
+
+        <a class="sidebar__item" href="#">
+          <span class="sidebar__icon">🛠️</span>
+          <span>Servicios</span>
+        </a>
+
+        <a class="sidebar__item" href="#">
+          <span class="sidebar__icon">📅</span>
+          <span>Recordatorios</span>
+        </a>
+
+        <a class="sidebar__item" href="#">
+          <span class="sidebar__icon">⚙️</span>
+          <span>Configuración</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar__bottom">
+      <button class="sidebar__logout">
+        <span>↩</span>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="dashboard-content">
+    <section class="dashboard-header">
+      <div>
+        <p class="dashboard-header__eyebrow">Resumen general</p>
+        <h1>Dashboard del taller</h1>
+        <span>Controla pendientes, revisiones y actividad reciente.</span>
+      </div>
+
+      <div class="dashboard-header__actions">
+        <button class="btn-light">Exportar</button>
+        <button class="btn-main">Nuevo servicio</button>
+      </div>
+    </section>
+
+    <section class="dashboard-stats">
+      <article class="stat-card">
+        <span class="stat-card__label">Servicios activos</span>
+        <h3>18</h3>
+        <p>4 ingresos hoy</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-card__label">Pendientes</span>
+        <h3>07</h3>
+        <p>2 con prioridad alta</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-card__label">Finalizados</span>
+        <h3>26</h3>
+        <p>Semana actual</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-card__label">Clientes nuevos</span>
+        <h3>12</h3>
+        <p>Últimos 30 días</p>
+      </article>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel-card panel-card--wide">
+        <div class="panel-card__header">
+          <div>
+            <h2>Trabajos pendientes</h2>
+            <span>Servicios en proceso o por iniciar</span>
+          </div>
+          <button class="panel-card__link">Ver todo</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Moto</th>
+                <th>Servicio</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Andrés Rojas</td>
+                <td>Yamaha MT-15</td>
+                <td>Cambio de aceite</td>
+                <td>14 Abr</td>
+                <td><span class="status status--warning">En proceso</span></td>
+              </tr>
+              <tr>
+                <td>Laura Peña</td>
+                <td>KTM Duke 200</td>
+                <td>Revisión general</td>
+                <td>14 Abr</td>
+                <td><span class="status status--danger">Pendiente</span></td>
+              </tr>
+              <tr>
+                <td>Camilo Torres</td>
+                <td>TVS Raider</td>
+                <td>Frenos delanteros</td>
+                <td>15 Abr</td>
+                <td><span class="status status--warning">En espera</span></td>
+              </tr>
+              <tr>
+                <td>Sofía Ruiz</td>
+                <td>Bajaj Pulsar NS</td>
+                <td>Alineación y ajuste</td>
+                <td>15 Abr</td>
+                <td><span class="status status--success">Listo para entrega</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <h2>To do</h2>
+            <span>Tareas rápidas del día</span>
+          </div>
+        </div>
+
+        <div class="todo-list">
+          <label class="todo-item">
+            <input type="checkbox">
+            <span>Confirmar repuestos de la MT-15</span>
+          </label>
+
+          <label class="todo-item">
+            <input type="checkbox" checked>
+            <span>Llamar cliente de la Pulsar NS</span>
+          </label>
+
+          <label class="todo-item">
+            <input type="checkbox">
+            <span>Actualizar estado de revisión de frenos</span>
+          </label>
+
+          <label class="todo-item">
+            <input type="checkbox">
+            <span>Programar entrega de la KTM</span>
+          </label>
+        </div>
+      </article>
+
+      <article class="panel-card panel-card--wide">
+        <div class="panel-card__header">
+          <div>
+            <h2>Revisiones hechas</h2>
+            <span>Últimos servicios completados</span>
+          </div>
+          <button class="panel-card__link">Historial</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Moto</th>
+                <th>Trabajo realizado</th>
+                <th>Técnico</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Juan Ávila</td>
+                <td>Suzuki Gixxer</td>
+                <td>Mantenimiento preventivo</td>
+                <td>Kevin</td>
+                <td><span class="status status--success">Finalizado</span></td>
+              </tr>
+              <tr>
+                <td>Paula Castro</td>
+                <td>CFMoto 250NK</td>
+                <td>Cambio de batería</td>
+                <td>David</td>
+                <td><span class="status status--success">Entregado</span></td>
+              </tr>
+              <tr>
+                <td>Nicolás Vera</td>
+                <td>Kawasaki Z250</td>
+                <td>Diagnóstico eléctrico</td>
+                <td>Kevin</td>
+                <td><span class="status status--success">Solucionado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <h2>Actividad reciente</h2>
+            <span>Movimientos del sistema</span>
+          </div>
+        </div>
+
+        <div class="activity-list">
+          <div class="activity-item">
+            <strong>Nuevo servicio creado</strong>
+            <span>Yamaha MT-15 · hace 10 min</span>
+          </div>
+
+          <div class="activity-item">
+            <strong>Cliente actualizado</strong>
+            <span>Laura Peña · hace 25 min</span>
+          </div>
+
+          <div class="activity-item">
+            <strong>Servicio marcado como entregado</strong>
+            <span>Suzuki Gixxer · hace 40 min</span>
+          </div>
+
+          <div class="activity-item">
+            <strong>Recordatorio programado</strong>
+            <span>Cambio de aceite · hace 1 hora</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
