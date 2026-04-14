@@ -1,0 +1,42 @@
+<div class="login-container">
+  <div class="login-container__overlay">
+    <div class="login-card">
+      <div class="login-card__brand">
+        <div class="login-card__logo">
+          <img src="/images/mechanicwavingnobackground.png" alt="TallerMotosApp logo">
+        </div>
+
+        <h1>Bienvenidos a TallerMotosApp</h1>
+        <p>
+          Gestiona clientes, motos, servicios y recordatorios desde una sola plataforma
+        </p>
+      </div>
+      <div class="login-card__form">
+        <div class="form-header">
+          <h2>Inicia</h2>
+          <h2>Sesión</h2>
+          <span>Ingresa tus credenciales</span>
+        </div>
+        <form class="form-login" (ngSubmit)="onLogin();">
+          <div class="form-group">
+            <label for="username">Correo o usuario</label>
+            <input id="username" name="username" type="text" placeholder="UserName" [(ngModel)]="username">
+          </div>
+          <div class="form-group">
+            <label for="email">Contraseña</label>
+            <input id="password" name="password" type="password" placeholder="*********" [(ngModel)]="password">
+          </div>
+          @if (errorMessage) {
+          <p class="error-message">{{errorMessage}}</p>
+          }
+          <div class="form-options">
+            <a href="#">Olvidaste tu contraseña?</a>
+          </div>
+          <button type="submit" class="btn-submit" [disabled]="loading">{{ loading ? 'ingresando...' :
+            'Ingresar'}}</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
