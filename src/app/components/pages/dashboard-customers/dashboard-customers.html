@@ -7,7 +7,7 @@
 
   <div class="customers-header__actions">
     <button class="btn-light" type="button">Exportar</button>
-    <button class="btn-main" type="button">Nuevo cliente</button>
+    <button class="btn-main" type="button" (click)="openNewCustomerModal()">Nuevo cliente</button>
   </div>
 </section>
 
@@ -77,3 +77,56 @@
     </table>
   </div>
 </section>
+<div class="customer-modal-backdrop" *ngIf="showNewCustomerModal" (click)="closeNewCustomerModal()">
+  <div class="customer-modal" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Nuevo cliente</p>
+        <h3>Registrar cliente</h3>
+        <span>Completa la información básica del cliente.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeNewCustomerModal()">
+        ✕
+      </button>
+    </div>
+
+    <form class="customer-form">
+      <div class="customer-form__grid">
+        <div class="form-group">
+          <label for="nombre">Nombre completo</label>
+          <input id="nombre" type="text" placeholder="Ej. Jefferson Guzmán" [(ngModel)]="newCustomerForm.nombre"
+            name="nombre" />
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" type="text" placeholder="Ej. 3001234567" [(ngModel)]="newCustomerForm.telefono"
+            name="telefono" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input id="email" type="email" placeholder="Ej. correo@ejemplo.com" [(ngModel)]="newCustomerForm.email"
+            name="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="documento">Documento</label>
+          <input id="documento" type="text" placeholder="Ej. 123456789" [(ngModel)]="newCustomerForm.documento"
+            name="documento" />
+        </div>
+      </div>
+
+      <div class="customer-modal__actions">
+        <button type="button" class="btn-cancel" (click)="closeNewCustomerModal()">
+          Cancelar
+        </button>
+
+        <button type="button" class="btn-save" (click)="saveNewCustomerMock()">
+          Guardar cliente
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { env } from '../../../env/env';
 import { LoginRequest, LoginResponse } from '../interfaces/login.interface';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = env.apiUrl;
+  private router = inject(Router)
 
 
   //? Llama la api del login
@@ -43,5 +45,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    this.router.navigate(['/'])
   }
 }

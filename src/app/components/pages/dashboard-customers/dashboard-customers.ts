@@ -2,10 +2,11 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Customer } from '../../../core/interfaces/customer.interface';
 import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../core/services/customer.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard-customers',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard-customers.html',
   styleUrl: './dashboard-customers.scss',
 })
@@ -16,6 +17,14 @@ export class DashboardCustomers implements OnInit {
   customers: Customer[] = [];
   isLoading = true;
   errorMessage = '';
+  showNewCustomerModal = false;
+
+  newCustomerForm = {
+    nombre: '',
+    telefono: '',
+    email: '',
+    documento: '',
+  };
 
   ngOnInit(): void {
     this.cargarClientes();
@@ -41,7 +50,22 @@ export class DashboardCustomers implements OnInit {
     });
   }
 
+
+  openNewCustomerModal(): void {
+    this.showNewCustomerModal = true;
+  }
+
+  closeNewCustomerModal(): void {
+    this.showNewCustomerModal = false;
+  }
+
+  saveNewCustomerMock(): void {
+    console.log('Formulario cliente listo para POST:', this.newCustomerForm);
+    this.closeNewCustomerModal();
+  }
+
   get totalMotos(): number {
     return this.customers.reduce((acc, customer) => acc + customer.cantidadMotos, 0);
   }
+
 }
