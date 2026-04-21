@@ -33,7 +33,11 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token || token === 'undefined' || token === 'null') {
+      return false;
+    }
+    return true;
   }
 
   logout(): void {

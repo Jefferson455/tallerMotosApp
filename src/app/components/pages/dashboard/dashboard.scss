@@ -1,198 +1,17 @@
 @use "variables" as v;
 
-.sidebar {
-  width: 280px;
-  min-height: 95.6vh;
-  background: linear-gradient(180deg, v.$color-danger 0%, v.$color-secondary 100%);
-  color: #ffffff;
-  padding: 1.5rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-top-right-radius: 28px;
-  border-bottom-right-radius: 28px;
-  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.08);
-
-  &__top {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__brand {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    margin-bottom: 2.5rem;
-    padding: 0.5rem 0.4rem;
-  }
-
-  &__logo {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.14);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-    backdrop-filter: blur(6px);
-
-    img {
-      width: 78%;
-      height: 78%;
-      object-fit: contain;
-      display: block;
-    }
-  }
-
-  &__brand-text {
-    h2 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-      font-family: v.$font-exo;
-      line-height: 1.1;
-      color: #ffffff;
-    }
-
-    span {
-      display: block;
-      margin-top: 0.2rem;
-      font-size: 0.82rem;
-      color: rgba(255, 255, 255, 0.72);
-      font-family: v.$font-exo;
-    }
-  }
-
-  &__nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-  }
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    padding: 0.95rem 1rem;
-    border-radius: 16px;
-    text-decoration: none;
-    color: rgba(255, 255, 255, 0.88);
-    font-weight: 500;
-    font-family: v.$font-exo;
-    transition: all 0.25s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      transform: translateX(4px);
-    }
-
-    &--active {
-      background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
-  }
-
-  &__icon {
-    width: 22px;
-    display: inline-flex;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  &__bottom {
-    padding-top: 1.5rem;
-  }
-
-  &__logout {
-    width: 100%;
-    height: 50px;
-    border: none;
-    border-radius: 999px;
-    background: #ffffff;
-    color: #1f7a63;
-    font-family: v.$font-exo;
-    font-weight: 700;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.7rem;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.16);
-    }
-  }
-}
-
-@media (max-width: 992px) {
-  .sidebar {
-    width: 92px;
-    padding: 1rem 0.8rem;
-
-    &__brand {
-      justify-content: center;
-    }
-
-    &__brand-text {
-      display: none;
-    }
-
-    &__item {
-      justify-content: center;
-      padding: 0.9rem;
-      border-radius: 14px;
-
-      span:last-child {
-        display: none;
-      }
-    }
-
-    &__logout {
-      span:last-child {
-        display: none;
-      }
-    }
-  }
-}
-
-//-------------------------
-
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f4f6f8;
-}
-
-.dashboard-content {
-  flex: 1;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  overflow-x: auto;
-}
-
 .dashboard-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1.5rem;
-  margin-bottom: 1rem;
-  margin-top: 1.2rem;
+  margin-bottom: 1.75rem;
 
   &__eyebrow {
     margin: 0 0 0.35rem;
     font-size: 0.85rem;
     font-weight: 700;
     color: v.$color-secondary;
-    font-family: v.$font-exo;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -201,7 +20,7 @@
     margin: 0;
     font-size: 2rem;
     color: #1f2937;
-    font-family: v.$font-Oswald;
+    font-family: v.$font-exo;
   }
 
   span {
@@ -209,7 +28,6 @@
     margin-top: 0.35rem;
     color: #6b7280;
     font-size: 0.96rem;
-    font-family: v.$font-exo;
   }
 
   &__actions {
@@ -266,7 +84,6 @@
   padding: 1.2rem 1.25rem;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
   border: 1px solid #eef0f3;
-  font-family: v.$font-exo;
 
   &__label {
     display: block;
@@ -299,12 +116,9 @@
 .panel-card {
   background: #ffffff;
   border-radius: 24px;
-  padding-top: 1.25rem;
-  padding-right: 2rem;
-  padding-left: 2rem;
+  padding: 1.25rem;
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
   border: 1px solid #eef0f3;
-  font-family: v.$font-exo;
 
   &--wide {
     min-width: 0;
@@ -453,10 +267,6 @@
 }
 
 @media (max-width: 768px) {
-  .dashboard-content {
-    padding: 1rem;
-  }
-
   .dashboard-header {
     flex-direction: column;
   }

@@ -1,0 +1,54 @@
+<aside class="sidebar">
+  <div class="sidebar__top">
+    <div class="sidebar__brand">
+      <div class="sidebar__logo">
+        <img src="/images/brand.png" alt="TallerMotosApp logo">
+      </div>
+
+      <div class="sidebar__brand-text">
+        <h2>{{ userName || 'Usuario' }}</h2>
+        <span>{{ rolUser }}</span>
+      </div>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a class="sidebar__item" routerLink="/dashboard" routerLinkActive="sidebar__item--active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span class="sidebar__icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a class="sidebar__item" routerLink="/dashboard/customers" routerLinkActive="sidebar__item--active">
+        <span class="sidebar__icon">👥</span>
+        <span>Clientes</span>
+      </a>
+
+      <a class="sidebar__item" href="#">
+        <span class="sidebar__icon">🏍️</span>
+        <span>Motos</span>
+      </a>
+
+      <a class="sidebar__item" href="#">
+        <span class="sidebar__icon">🛠️</span>
+        <span>Servicios</span>
+      </a>
+
+      <a class="sidebar__item" href="#">
+        <span class="sidebar__icon">📅</span>
+        <span>Recordatorios</span>
+      </a>
+
+      <a class="sidebar__item" href="#">
+        <span class="sidebar__icon">⚙️</span>
+        <span>Configuración</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar__bottom">
+    <button class="sidebar__logout">
+      <span>↩</span>
+      <span>Cerrar sesión</span>
+    </button>
+  </div>
+</aside>
