@@ -1,6 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { RolService, Rol } from '../../../core/services/rol.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { AuthService } from '../../../core/services/auth.service';
 interface UsuarioStorage {
   id: number;
   nombre: string;
@@ -10,16 +13,18 @@ interface UsuarioStorage {
 
 @Component({
   selector: 'app-asidebar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './asidebar.html',
   styleUrl: './asidebar.scss',
 })
 export class Asidebar implements OnInit {
   private rolesService = inject(RolService);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService)
 
   userName = '';
   rolUser = 'Cargando rol...';
+  showLogoutModal = false;
 
   private mapearRol(nombreRol: string): string {
     const rolesMap: Record<string, string> = {
@@ -68,5 +73,18 @@ export class Asidebar implements OnInit {
       this.rolUser = 'Sin rol';
       this.cdr.detectChanges();
     }
+  }
+
+  openLogoutModal(): void {
+    this.showLogoutModal = true;
+  }
+
+  closeLogoutModal(): void {
+    this.showLogoutModal = false;
+  }
+
+  confirmLogout(): void {
+    this.showLogoutModal = false;
+    this.authService.logout();
   }
 }

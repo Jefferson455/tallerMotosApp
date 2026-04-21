@@ -46,9 +46,29 @@
   </div>
 
   <div class="sidebar__bottom">
-    <button class="sidebar__logout">
+    <button class="sidebar__logout" type="button" (click)="openLogoutModal()">
       <span>↩</span>
       <span>Cerrar sesión</span>
     </button>
   </div>
 </aside>
+<div class="logout-modal-backdrop" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
+  <div class="logout-modal" (click)="$event.stopPropagation()">
+    <div class="logout-modal__icon">🔒</div>
+
+    <h3>¿Cerrar sesión?</h3>
+    <p>
+      Estás a punto de salir de tu sesión actual en TallerMotosApp.
+    </p>
+
+    <div class="logout-modal__actions">
+      <button type="button" class="btn-cancel" (click)="closeLogoutModal()">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-confirm" (click)="confirmLogout()">
+        Sí, cerrar sesión
+      </button>
+    </div>
+  </div>
+</div>
