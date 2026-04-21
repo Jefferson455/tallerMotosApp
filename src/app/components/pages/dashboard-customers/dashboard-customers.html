@@ -1,46 +1,77 @@
-<section class="dashboard-header">
+<section class="customers-header">
   <div>
-    <p class="dashboard-header__eyebrow">Clientes</p>
+    <p class="customers-header__eyebrow">Clientes</p>
     <h1>Gestión de clientes</h1>
     <span>Administra y consulta tus clientes registrados.</span>
   </div>
 
-  <div class="dashboard-header__actions">
-    <button class="btn-light">Exportar</button>
-    <button class="btn-main">Nuevo cliente</button>
+  <div class="customers-header__actions">
+    <button class="btn-light" type="button">Exportar</button>
+    <button class="btn-main" type="button">Nuevo cliente</button>
   </div>
 </section>
 
-<section class="panel-card">
-  <div class="panel-card__header">
+<section class="customers-stats">
+  <article class="mini-stat">
+    <span>Total clientes</span>
+    <h3>{{ customers.length }}</h3>
+  </article>
+
+  <article class="mini-stat">
+    <span>Total motos registradas</span>
+    <h3>
+      {{ customers.reduce((acc, customer) => acc + customer.cantidadMotos, 0) }}
+    </h3>
+  </article>
+</section>
+
+<section class="customers-panel">
+  <div class="customers-panel__header">
     <div>
       <h2>Listado de clientes</h2>
-      <span>Vista general del módulo de clientes</span>
+      <p>Vista general del módulo de clientes</p>
     </div>
+
+    <button class="panel-link" type="button" (click)="cargarClientes()">
+      Recargar
+    </button>
   </div>
 
-  <div class="table-wrap">
-    <table class="dashboard-table">
+  <div *ngIf="isLoading" class="state-box">
+    Cargando clientes...
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="state-box state-box--error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage" class="table-wrap">
+    <table class="customers-table">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Nombre</th>
-          <th>Documento</th>
           <th>Teléfono</th>
-          <th>Email</th>
+          <th>Motos registradas</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr>
-          <td>Jefferson Guzmán</td>
-          <td>123456789</td>
-          <td>3001234567</td>
-          <td>jefferson@email.com</td>
+        <tr *ngFor="let customer of customers">
+          <td>{{ customer.id }}</td>
+          <td>{{ customer.nombre }}</td>
+          <td>{{ customer.telefono }}</td>
+          <td>
+            <span class="badge-motos">
+              {{ customer.cantidadMotos }}
+            </span>
+          </td>
         </tr>
-        <tr>
-          <td>Laura Peña</td>
-          <td>987654321</td>
-          <td>3015556677</td>
-          <td>laura@email.com</td>
+
+        <tr *ngIf="customers.length === 0">
+          <td colspan="4" class="empty-row">
+            No hay clientes registrados.
+          </td>
         </tr>
       </tbody>
     </table>
