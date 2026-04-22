@@ -42,6 +42,7 @@
     Cargando clientes...
   </div>
   }
+
   @if (!isLoading && errorMessage) {
   <div class="state-box state-box--error">
     {{ errorMessage }}
@@ -71,6 +72,17 @@
             <span class="badge-motos">
               {{ customer.cantidadMotos }}
             </span>
+          </td>
+          <td>
+            <div class="actions-box">
+              <button type="button" class="btn-action btn-action--view" (click)="verDetalle(customer)">
+                Ver
+              </button>
+
+              <button type="button" class="btn-action btn-action--edit" (click)="editarCliente(customer)">
+                Editar
+              </button>
+            </div>
           </td>
         </tr>
         }

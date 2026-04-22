@@ -117,4 +117,12 @@ export class DashboardCustomers implements OnInit {
     this.motos.splice(index, 1);
   }
 
+  verDetalle(customer: Customer): void {
+    console.log('Ver detalle:', customer);
+  }
+
+  editarCliente(customer: Customer): void {
+    console.log('Editar cliente:', customer);
+  }
+
 }

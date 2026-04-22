@@ -158,6 +158,42 @@
 .table-wrap {
   overflow-x: auto;
 }
+.actions-box {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  height: 36px;
+  padding: 0 0.9rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: all 0.22s ease;
+}
+
+.btn-action--view {
+  background: #eff6ff;
+  color: #2563eb;
+
+  &:hover {
+    background: #dbeafe;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-action--edit {
+  background: #fff7ed;
+  color: #f97316;
+
+  &:hover {
+    background: #ffedd5;
+    transform: translateY(-1px);
+  }
+}
 
 .customers-table {
   width: 100%;
