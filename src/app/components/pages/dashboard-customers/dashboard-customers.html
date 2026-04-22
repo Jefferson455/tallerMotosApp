@@ -37,15 +37,19 @@
     </button>
   </div>
 
-  <div *ngIf="isLoading" class="state-box">
+  @if (isLoading) {
+  <div class="state-box">
     Cargando clientes...
   </div>
-
-  <div *ngIf="!isLoading && errorMessage" class="state-box state-box--error">
+  }
+  @if (!isLoading && errorMessage) {
+  <div class="state-box state-box--error">
     {{ errorMessage }}
   </div>
+  }
 
-  <div *ngIf="!isLoading && !errorMessage" class="table-wrap">
+  @if (!isLoading && !errorMessage) {
+  <div class="table-wrap">
     <table class="customers-table">
       <thead>
         <tr>
@@ -53,11 +57,13 @@
           <th>Nombre</th>
           <th>Teléfono</th>
           <th>Motos registradas</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let customer of customers">
+        @for (customer of customers; track customer.id) {
+        <tr>
           <td>{{ customer.id }}</td>
           <td>{{ customer.nombre }}</td>
           <td>{{ customer.telefono }}</td>
@@ -67,17 +73,23 @@
             </span>
           </td>
         </tr>
+        }
 
-        <tr *ngIf="customers.length === 0">
+        @if ( customers.length === 0) {
+        <tr>
           <td colspan="4" class="empty-row">
             No hay clientes registrados.
           </td>
         </tr>
+        }
       </tbody>
     </table>
   </div>
+  }
+
 </section>
-<div class="customer-modal-backdrop" *ngIf="showNewCustomerModal" (click)="closeNewCustomerModal()">
+@if (showNewCustomerModal) {
+<div class="customer-modal-backdrop" (click)="closeNewCustomerModal()">
   <div class="customer-modal customer-modal--large" (click)="$event.stopPropagation()">
     <div class="customer-modal__header">
       <div>
@@ -120,7 +132,8 @@
         </div>
 
         <div class="moto-list">
-          <div class="moto-section" *ngFor="let moto of motos; let i = index">
+          @for (moto of motos; track $index; let i = $index) {
+          <div class="moto-section">
             <button type="button" class="moto-banner" (click)="toggleMotoForm(i)">
               <div>
                 <strong>
@@ -134,10 +147,11 @@
               </div>
 
               <div class="moto-banner__actions">
-                <button *ngIf="motos.length > 1" type="button" class="moto-banner__delete"
-                  (click)="eliminarMoto(i); $event.stopPropagation()">
+                @if (motos.length > 1) {
+                <button type="button" class="moto-banner__delete" (click)="eliminarMoto(i); $event.stopPropagation()">
                   ✕
                 </button>
+                }
 
                 <span class="moto-banner__icon">
                   {{ moto.abierta ? '−' : '+' }}
@@ -175,6 +189,8 @@
               </div>
             </div>
           </div>
+          }
+
 
           <button type="button" class="add-moto-btn" (click)="agregarMoto()">
             + Agregar otra moto
@@ -194,3 +210,4 @@
     </div>
   </div>
 </div>
+}
