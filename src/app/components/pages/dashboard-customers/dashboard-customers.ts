@@ -4,6 +4,15 @@ import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule } from '@angular/forms';
 
+
+type MotoForm = {
+  placa: string;
+  marca: string;
+  modelo: string;
+  anio: string;
+  abierta: boolean;
+};
+
 @Component({
   selector: 'app-dashboard-customers',
   imports: [CommonModule, FormsModule],
@@ -25,10 +34,13 @@ export class DashboardCustomers implements OnInit {
     email: '',
     documento: '',
   };
+  motos: MotoForm[] = [];
 
   ngOnInit(): void {
     this.cargarClientes();
   }
+
+
 
   cargarClientes(): void {
     this.isLoading = true;
@@ -50,9 +62,27 @@ export class DashboardCustomers implements OnInit {
     });
   }
 
+  private crearMotoVacia(): MotoForm {
+    return {
+      placa: '',
+      marca: '',
+      modelo: '',
+      anio: '',
+      abierta: false,
+    };
+  }
 
   openNewCustomerModal(): void {
     this.showNewCustomerModal = true;
+
+    this.newCustomerForm = {
+      nombre: '',
+      telefono: '',
+      email: '',
+      documento: '',
+    };
+
+    this.motos = [this.crearMotoVacia()];
   }
 
   closeNewCustomerModal(): void {
@@ -61,11 +91,30 @@ export class DashboardCustomers implements OnInit {
 
   saveNewCustomerMock(): void {
     console.log('Formulario cliente listo para POST:', this.newCustomerForm);
+    console.log('Cliente:', this.newCustomerForm);
+    console.log('Motos:', this.motos);
     this.closeNewCustomerModal();
   }
 
   get totalMotos(): number {
     return this.customers.reduce((acc, customer) => acc + customer.cantidadMotos, 0);
+  }
+
+  toggleMotoForm(index: number): void {
+    this.motos[index].abierta = !this.motos[index].abierta;
+  }
+  agregarMoto(): void {
+    this.motos.push({
+      placa: '',
+      marca: '',
+      modelo: '',
+      anio: '',
+      abierta: true,
+    });
+  }
+
+  eliminarMoto(index: number): void {
+    this.motos.splice(index, 1);
   }
 
 }
