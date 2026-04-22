@@ -37,15 +37,20 @@
     </button>
   </div>
 
-  <div *ngIf="isLoading" class="state-box">
+  @if (isLoading) {
+  <div class="state-box">
     Cargando clientes...
   </div>
+  }
 
-  <div *ngIf="!isLoading && errorMessage" class="state-box state-box--error">
+  @if (!isLoading && errorMessage) {
+  <div class="state-box state-box--error">
     {{ errorMessage }}
   </div>
+  }
 
-  <div *ngIf="!isLoading && !errorMessage" class="table-wrap">
+  @if (!isLoading && !errorMessage) {
+  <div class="table-wrap">
     <table class="customers-table">
       <thead>
         <tr>
@@ -53,11 +58,13 @@
           <th>Nombre</th>
           <th>Teléfono</th>
           <th>Motos registradas</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let customer of customers">
+        @for (customer of customers; track customer.id) {
+        <tr>
           <td>{{ customer.id }}</td>
           <td>{{ customer.nombre }}</td>
           <td>{{ customer.telefono }}</td>
@@ -66,24 +73,41 @@
               {{ customer.cantidadMotos }}
             </span>
           </td>
-        </tr>
+          <td>
+            <div class="actions-box">
+              <button type="button" class="btn-action btn-action--view" (click)="verDetalle(customer)">
+                Ver
+              </button>
 
-        <tr *ngIf="customers.length === 0">
+              <button type="button" class="btn-action btn-action--edit" (click)="editarCliente(customer)">
+                Editar
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+
+        @if ( customers.length === 0) {
+        <tr>
           <td colspan="4" class="empty-row">
             No hay clientes registrados.
           </td>
         </tr>
+        }
       </tbody>
     </table>
   </div>
+  }
+
 </section>
-<div class="customer-modal-backdrop" *ngIf="showNewCustomerModal" (click)="closeNewCustomerModal()">
-  <div class="customer-modal" (click)="$event.stopPropagation()">
+@if (showNewCustomerModal) {
+<div class="customer-modal-backdrop" (click)="closeNewCustomerModal()">
+  <div class="customer-modal customer-modal--large" (click)="$event.stopPropagation()">
     <div class="customer-modal__header">
       <div>
         <p class="customer-modal__eyebrow">Nuevo cliente</p>
         <h3>Registrar cliente</h3>
-        <span>Completa la información básica del cliente.</span>
+        <span>Completa la información básica del cliente y sus motos.</span>
       </div>
 
       <button type="button" class="customer-modal__close" (click)="closeNewCustomerModal()">
@@ -91,42 +115,111 @@
       </button>
     </div>
 
-    <form class="customer-form">
-      <div class="customer-form__grid">
-        <div class="form-group">
-          <label for="nombre">Nombre completo</label>
-          <input id="nombre" type="text" placeholder="Ej. Jefferson Guzmán" [(ngModel)]="newCustomerForm.nombre"
-            name="nombre" />
+    <div class="customer-modal__body">
+      <form class="customer-form">
+        <div class="customer-form__grid">
+          <div class="form-group">
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" type="text" placeholder="Ej. Jefferson Guzmán" [(ngModel)]="newCustomerForm.nombre"
+              name="nombre" />
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" type="text" placeholder="Ej. 3001234567" [(ngModel)]="newCustomerForm.telefono"
+              name="telefono" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input id="email" type="email" placeholder="Ej. correo@ejemplo.com" [(ngModel)]="newCustomerForm.email"
+              name="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="documento">Documento</label>
+            <input id="documento" type="text" placeholder="Ej. 123456789" [(ngModel)]="newCustomerForm.documento"
+              name="documento" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="telefono">Teléfono</label>
-          <input id="telefono" type="text" placeholder="Ej. 3001234567" [(ngModel)]="newCustomerForm.telefono"
-            name="telefono" />
+        <div class="moto-list">
+          @for (moto of motos; track $index; let i = $index) {
+          <div class="moto-section">
+            <button type="button" class="moto-banner" (click)="toggleMotoForm(i)">
+              <div>
+                <strong>
+                  {{ i === 0 ? 'Agregar moto' : 'Agregar moto ' + (i + 1) }}
+                </strong>
+                <span>
+                  {{ i === 0
+                  ? 'Registra la primera moto del cliente'
+                  : 'Moto adicional del cliente' }}
+                </span>
+              </div>
+
+              <div class="moto-banner__actions">
+                @if (motos.length > 1) {
+                <button type="button" class="moto-banner__delete" (click)="eliminarMoto(i); $event.stopPropagation()">
+                  ✕
+                </button>
+                }
+
+                <span class="moto-banner__icon">
+                  {{ moto.abierta ? '−' : '+' }}
+                </span>
+              </div>
+            </button>
+
+            <div class="moto-panel" [class.moto-panel--open]="moto.abierta">
+              <div class="moto-panel__content">
+                <div class="customer-form__grid">
+                  <div class="form-group">
+                    <label [for]="'placa_' + i">Placa</label>
+                    <input [id]="'placa_' + i" type="text" placeholder="Ej. ABC12D" [(ngModel)]="moto.placa"
+                      [name]="'placa_' + i" />
+                  </div>
+
+                  <div class="form-group">
+                    <label [for]="'marca_' + i">Marca</label>
+                    <input [id]="'marca_' + i" type="text" placeholder="Ej. Yamaha" [(ngModel)]="moto.marca"
+                      [name]="'marca_' + i" />
+                  </div>
+
+                  <div class="form-group">
+                    <label [for]="'modelo_' + i">Modelo</label>
+                    <input [id]="'modelo_' + i" type="text" placeholder="Ej. MT-15" [(ngModel)]="moto.modelo"
+                      [name]="'modelo_' + i" />
+                  </div>
+
+                  <div class="form-group">
+                    <label [for]="'anio_' + i">Año</label>
+                    <input [id]="'anio_' + i" type="text" placeholder="Ej. 2024" [(ngModel)]="moto.anio"
+                      [name]="'anio_' + i" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+
+
+          <button type="button" class="add-moto-btn" (click)="agregarMoto()">
+            + Agregar otra moto
+          </button>
         </div>
 
-        <div class="form-group">
-          <label for="email">Correo electrónico</label>
-          <input id="email" type="email" placeholder="Ej. correo@ejemplo.com" [(ngModel)]="newCustomerForm.email"
-            name="email" />
+        <div class="customer-modal__actions">
+          <button type="button" class="btn-cancel" (click)="closeNewCustomerModal()">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-save" (click)="saveNewCustomerMock()">
+            Guardar cliente
+          </button>
         </div>
-
-        <div class="form-group">
-          <label for="documento">Documento</label>
-          <input id="documento" type="text" placeholder="Ej. 123456789" [(ngModel)]="newCustomerForm.documento"
-            name="documento" />
-        </div>
-      </div>
-
-      <div class="customer-modal__actions">
-        <button type="button" class="btn-cancel" (click)="closeNewCustomerModal()">
-          Cancelar
-        </button>
-
-        <button type="button" class="btn-save" (click)="saveNewCustomerMock()">
-          Guardar cliente
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
+}
