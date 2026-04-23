@@ -2,10 +2,12 @@
 
 .sidebar {
   width: 280px;
-  min-height: 95.6vh;
+  min-height: 100%;
   background: linear-gradient(180deg, v.$color-danger 0%, v.$color-secondary 100%);
   color: #ffffff;
-  padding: 1.5rem 1.25rem;
+  //padding: 1.5rem 1.25rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -14,6 +16,7 @@
   box-shadow: 8px 0 30px rgba(0, 0, 0, 0.08);
 
   &__top {
+    padding-top: 1.5rem;
     display: flex;
     flex-direction: column;
   }
@@ -106,6 +109,7 @@
 
   &__bottom {
     padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
 
   &__logout {
