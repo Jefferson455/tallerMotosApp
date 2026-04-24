@@ -1,4 +1,4 @@
-<app-navbar (servicesClick)="openServicesModal()" />
+<app-navbar (servicesClick)="openServicesModal()" (aboutClick)="openAboutModal()" />
 <section class="home-hero">
   <div class="home-hero__content">
     <div class="home-hero__text">
@@ -134,6 +134,50 @@
     <div class="service-modal__actions">
       <button class="btn-close" (click)="closeServiceModal()">
         Perfecto
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+<!--! Modal Nosotros -->
+@if (isAboutModalOpen) {
+<div class="service-modal-backdrop" (click)="closeAboutModal()">
+  <div class="service-modal about-modal" (click)="$event.stopPropagation()">
+
+    <button class="service-modal__close" (click)="closeAboutModal()">
+      ✕
+    </button>
+
+    <span class="service-modal__tag">NOSOTROS</span>
+
+    <h2>Somos TallerMotosApp</h2>
+
+    <p class="service-modal__subtitle">
+      Nacimos con la idea de ayudar a los talleres de motocicletas a trabajar de una forma más organizada,
+      clara y profesional.
+    </p>
+
+    <div class="about-content">
+      <p>
+        Nuestro objetivo es facilitar la gestión diaria del taller, permitiendo llevar el control de clientes,
+        motos, servicios y recordatorios desde una sola plataforma.
+      </p>
+
+      <p>
+        Creemos que un taller no solo necesita herramientas mecánicas, también necesita herramientas digitales
+        que le permitan crecer, atender mejor a sus clientes y tomar mejores decisiones.
+      </p>
+
+      <div class="about-highlight">
+        🏍️ Tecnología pensada para talleres reales, con procesos simples y útiles.
+      </div>
+    </div>
+
+    <div class="service-modal__actions">
+      <button class="btn-close" (click)="closeAboutModal()">
+        Entendido
       </button>
     </div>
 

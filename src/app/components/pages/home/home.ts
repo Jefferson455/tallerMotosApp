@@ -9,6 +9,7 @@ import { Navbar } from "../../shared/navbar/navbar";
 })
 export class Home {
   isServicesModalOpen = false;
+  isAboutModalOpen = false;
   activeServiceIndex: number | null = null;
 
   openServicesModal(): void {
@@ -18,8 +19,15 @@ export class Home {
   closeServiceModal(): void {
     this.isServicesModalOpen = false;
   }
-
   toggleService(index: number): void {
     this.activeServiceIndex = this.activeServiceIndex === index ? null : index;
   }
+  openAboutModal(): void {
+    this.isAboutModalOpen = true;
+  }
+
+  closeAboutModal(): void {
+    this.isAboutModalOpen = false;
+  }
+
 }
