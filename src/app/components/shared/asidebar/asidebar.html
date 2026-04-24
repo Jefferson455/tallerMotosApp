@@ -52,7 +52,8 @@
     </button>
   </div>
 </aside>
-<div class="logout-modal-backdrop" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
+@if (showLogoutModal) {
+<div class="logout-modal-backdrop" (click)="closeLogoutModal()">
   <div class="logout-modal" (click)="$event.stopPropagation()">
     <div class="logout-modal__icon">🔒</div>
 
@@ -72,3 +73,4 @@
     </div>
   </div>
 </div>
+}
