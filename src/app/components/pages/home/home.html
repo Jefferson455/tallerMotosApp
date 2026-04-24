@@ -1,4 +1,4 @@
-<app-navbar />
+<app-navbar (servicesClick)="openServicesModal()" (aboutClick)="openAboutModal()" (contactClick)="openContactModal()" />
 <section class="home-hero">
   <div class="home-hero__content">
     <div class="home-hero__text">
@@ -11,8 +11,7 @@
       </p>
 
       <div class="home-hero__actions">
-        <button class="btn-primary">Comenzar</button>
-        <button class="btn-secondary">Ver servicios</button>
+        <button class="btn-primary" (click)="openServicesModal()">Agenda tu servicio</button>
       </div>
     </div>
 
@@ -34,3 +33,211 @@
     </div>
   </div>
 </section>
+
+<!--! Modal servicios -->
+@if (isServicesModalOpen) {
+<div class="service-modal-backdrop" (click)="closeServiceModal()">
+
+  <div class="service-modal" (click)="$event.stopPropagation()">
+
+    <button class="service-modal__close" (click)="closeServiceModal()">
+      ✕
+    </button>
+
+    <span class="service-modal__tag">SERVICIOS</span>
+
+    <h2>Lo que tu taller necesita!</h2>
+
+    <p class="service-modal__subtitle">
+      Todo lo necesario para digitalizar y organizar tu taller en una sola plataforma.
+    </p>
+
+    <div class="service-list">
+
+      <div class="service-item" [class.service-item--active]="activeServiceIndex === 0" (click)="toggleService(0)">
+        <span>👤</span>
+        <div class="service-item__content">
+          <strong>Gestión de clientes</strong>
+          <small>Registro completo de clientes</small>
+
+          @if (activeServiceIndex === 0) {
+          <p class="service-item__description">
+            Permite registrar, consultar y organizar la información básica de cada cliente,
+            facilitando el seguimiento de sus datos y motos asociadas.
+          </p>
+          }
+        </div>
+      </div>
+
+      <div class="service-item" [class.service-item--active]="activeServiceIndex === 1" (click)="toggleService(1)">
+        <span>🏍️</span>
+        <div class="service-item__content">
+          <strong>Registro de motocicletas</strong>
+          <small>Control por placa y propietario</small>
+
+          @if (activeServiceIndex === 1) {
+          <p class="service-item__description">
+            Ayuda a guardar los datos principales de cada motocicleta, relacionándola con
+            su propietario para mantener un control más claro dentro del taller.
+          </p>
+          }
+        </div>
+      </div>
+
+      <div class="service-item" [class.service-item--active]="activeServiceIndex === 2" (click)="toggleService(2)">
+        <span>🛠️</span>
+        <div class="service-item__content">
+          <strong>Servicios realizados</strong>
+          <small>Historial de mantenimientos</small>
+
+          @if (activeServiceIndex === 2) {
+          <p class="service-item__description">
+            Permite llevar un historial de los trabajos realizados, repuestos usados y
+            observaciones importantes de cada servicio.
+          </p>
+          }
+        </div>
+      </div>
+
+      <div class="service-item" [class.service-item--active]="activeServiceIndex === 3" (click)="toggleService(3)">
+        <span>⏰</span>
+        <div class="service-item__content">
+          <strong>Recordatorios</strong>
+          <small>Próximos cambios y revisiones</small>
+
+          @if (activeServiceIndex === 3) {
+          <p class="service-item__description">
+            Facilita recordar próximas revisiones, cambios de aceite, mantenimientos
+            preventivos y servicios pendientes.
+          </p>
+          }
+        </div>
+      </div>
+
+      <div class="service-item" [class.service-item--active]="activeServiceIndex === 4" (click)="toggleService(4)">
+        <span>🔐</span>
+        <div class="service-item__content">
+          <strong>Acceso seguro</strong>
+          <small>Login y control administrativo</small>
+
+          @if (activeServiceIndex === 4) {
+          <p class="service-item__description">
+            El sistema cuenta con autenticación para proteger la información y permitir
+            el acceso controlado a usuarios autorizados.
+          </p>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <div class="service-modal__actions">
+      <button class="btn-close" (click)="closeServiceModal()">
+        Perfecto
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+<!--! Modal Nosotros -->
+@if (isAboutModalOpen) {
+<div class="service-modal-backdrop" (click)="closeAboutModal()">
+  <div class="service-modal about-modal" (click)="$event.stopPropagation()">
+
+    <button class="service-modal__close" (click)="closeAboutModal()">
+      ✕
+    </button>
+
+    <span class="service-modal__tag">NOSOTROS</span>
+
+    <h2>Somos TallerMotosApp</h2>
+
+    <p class="service-modal__subtitle">
+      Nacimos con la idea de ayudar a los talleres de motocicletas a trabajar de una forma más organizada,
+      clara y profesional.
+    </p>
+
+    <div class="about-content">
+      <p>
+        Nuestro objetivo es facilitar la gestión diaria del taller, permitiendo llevar el control de clientes,
+        motos, servicios y recordatorios desde una sola plataforma.
+      </p>
+
+      <p>
+        Creemos que un taller no solo necesita herramientas mecánicas, también necesita herramientas digitales
+        que le permitan crecer, atender mejor a sus clientes y tomar mejores decisiones.
+      </p>
+
+      <div class="about-highlight">
+        🏍️ Tecnología pensada para talleres reales, con procesos simples y útiles.
+      </div>
+    </div>
+
+    <div class="service-modal__actions">
+      <button class="btn-close" (click)="closeAboutModal()">
+        Entendido
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+<!--! Modal Contactanos -->
+@if (isContactModalOpen) {
+<div class="service-modal-backdrop" (click)="closeContactModal()">
+  <div class="service-modal contact-modal" (click)="$event.stopPropagation()">
+
+    <button class="service-modal__close" (click)="closeContactModal()">
+      ✕
+    </button>
+
+    <span class="service-modal__tag">CONTACTO</span>
+
+    <h2>Hablemos de tu taller</h2>
+
+    <p class="service-modal__subtitle">
+      Estamos listos para ayudarte a organizar mejor tus clientes, motos y servicios.
+    </p>
+
+    <div class="contact-content">
+      <div class="contact-item">
+        <span>📍</span>
+        <div>
+          <strong>Ubicación</strong>
+          <small>Bogotá, Colombia</small>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span>📞</span>
+        <div>
+          <strong>Teléfono</strong>
+          <small>+57 300 123 4567</small>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span>✉️</span>
+        <div>
+          <strong>Correo</strong>
+          <small>contacto&#64;tallermotosapp.com</small>
+        </div>
+      </div>
+
+      <div class="contact-highlight">
+        🛠️ Agenda tu servicio y lleva el control de tu taller de una forma más clara y profesional.
+      </div>
+    </div>
+
+    <div class="service-modal__actions">
+      <button class="btn-close" (click)="closeContactModal()">
+        Listo
+      </button>
+    </div>
+
+  </div>
+</div>
+}
