@@ -10,6 +10,7 @@ import { Navbar } from "../../shared/navbar/navbar";
 export class Home {
   isServicesModalOpen = false;
   isAboutModalOpen = false;
+  isContactModalOpen = false;
   activeServiceIndex: number | null = null;
 
   openServicesModal(): void {
@@ -28,6 +29,13 @@ export class Home {
 
   closeAboutModal(): void {
     this.isAboutModalOpen = false;
+  }
+  openContactModal(): void {
+    this.isContactModalOpen = true;
+  }
+
+  closeContactModal(): void {
+    this.isContactModalOpen = false;
   }
 
 }

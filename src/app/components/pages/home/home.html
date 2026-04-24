@@ -1,4 +1,4 @@
-<app-navbar (servicesClick)="openServicesModal()" (aboutClick)="openAboutModal()" />
+<app-navbar (servicesClick)="openServicesModal()" (aboutClick)="openAboutModal()" (contactClick)="openContactModal()" />
 <section class="home-hero">
   <div class="home-hero__content">
     <div class="home-hero__text">
@@ -178,6 +178,63 @@
     <div class="service-modal__actions">
       <button class="btn-close" (click)="closeAboutModal()">
         Entendido
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+<!--! Modal Contactanos -->
+@if (isContactModalOpen) {
+<div class="service-modal-backdrop" (click)="closeContactModal()">
+  <div class="service-modal contact-modal" (click)="$event.stopPropagation()">
+
+    <button class="service-modal__close" (click)="closeContactModal()">
+      ✕
+    </button>
+
+    <span class="service-modal__tag">CONTACTO</span>
+
+    <h2>Hablemos de tu taller</h2>
+
+    <p class="service-modal__subtitle">
+      Estamos listos para ayudarte a organizar mejor tus clientes, motos y servicios.
+    </p>
+
+    <div class="contact-content">
+      <div class="contact-item">
+        <span>📍</span>
+        <div>
+          <strong>Ubicación</strong>
+          <small>Bogotá, Colombia</small>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span>📞</span>
+        <div>
+          <strong>Teléfono</strong>
+          <small>+57 300 123 4567</small>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span>✉️</span>
+        <div>
+          <strong>Correo</strong>
+          <small>contacto&#64;tallermotosapp.com</small>
+        </div>
+      </div>
+
+      <div class="contact-highlight">
+        🛠️ Agenda tu servicio y lleva el control de tu taller de una forma más clara y profesional.
+      </div>
+    </div>
+
+    <div class="service-modal__actions">
+      <button class="btn-close" (click)="closeContactModal()">
+        Listo
       </button>
     </div>
 

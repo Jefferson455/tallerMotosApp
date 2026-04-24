@@ -390,6 +390,62 @@
   line-height: 1.5;
 }
 
+//! Modal Contact
+
+.contact-modal {
+  max-width: 660px;
+}
+
+.contact-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid #f1f5f9;
+  background: #fafafa;
+  transition: all 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+
+  span {
+    font-size: 1.35rem;
+  }
+
+  strong {
+    display: block;
+    color: #111827;
+    font-weight: 800;
+  }
+
+  small {
+    display: block;
+    margin-top: 0.2rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+}
+
+.contact-highlight {
+  margin-top: 0.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #374151;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 @media (max-width: 576px) {
   .home-hero {
     &__content {

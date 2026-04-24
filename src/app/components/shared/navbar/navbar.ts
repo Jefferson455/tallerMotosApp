@@ -10,12 +10,16 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class Navbar {
   @Output() servicesClick = new EventEmitter<void>();
   @Output() aboutClick = new EventEmitter<void>();
+  @Output() contactClick = new EventEmitter<void>();
 
   onServicesClick(): void {
     this.servicesClick.emit();
   }
   onAboutClick(): void {
     this.aboutClick.emit();
+  }
+  onContactClick(): void {
+    this.contactClick.emit();
   }
 
 }
