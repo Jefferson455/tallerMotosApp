@@ -8,5 +8,18 @@ import { Navbar } from "../../shared/navbar/navbar";
   styleUrl: './home.scss',
 })
 export class Home {
+  isServicesModalOpen = false;
+  activeServiceIndex: number | null = null;
 
+  openServicesModal(): void {
+    this.isServicesModalOpen = true;
+  }
+
+  closeServiceModal(): void {
+    this.isServicesModalOpen = false;
+  }
+
+  toggleService(index: number): void {
+    this.activeServiceIndex = this.activeServiceIndex === index ? null : index;
+  }
 }

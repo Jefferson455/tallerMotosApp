@@ -6,11 +6,9 @@
   </div>
 
   <ul class="navbar__menu">
-    <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
-    <li><a routerLink="/clientes" routerLinkActive="active">Clientes</a></li>
-    <li><a routerLink="/motos" routerLinkActive="active">Motos</a></li>
-    <li><a routerLink="/servicios" routerLinkActive="active">Servicios</a></li>
-    <li><a routerLink="/recordatorios" routerLinkActive="active">Recordatorios</a></li>
+    <li><a type="button" (click)="onServicesClick()">Servicios</a></li>
+    <li><a routerLink="/clientes" routerLinkActive="active">Nosotros</a></li>
+    <li><a routerLink="/motos" routerLinkActive="active">Contacto</a></li>
   </ul>
   <button class="btn-login" type="button" routerLink='/login'>
     Login
