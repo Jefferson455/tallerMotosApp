@@ -33,6 +33,7 @@ export class DashboardCustomers implements OnInit {
     telefono: '',
     email: '',
     documento: '',
+    tipoDocumento: 1,
   };
   motos: MotoForm[] = [];
 
@@ -80,6 +81,7 @@ export class DashboardCustomers implements OnInit {
       telefono: '',
       email: '',
       documento: '',
+      tipoDocumento: 1,
     };
 
     this.motos = [this.crearMotoVacia()];
@@ -89,11 +91,36 @@ export class DashboardCustomers implements OnInit {
     this.showNewCustomerModal = false;
   }
 
-  saveNewCustomerMock(): void {
-    console.log('Formulario cliente listo para POST:', this.newCustomerForm);
-    console.log('Cliente:', this.newCustomerForm);
-    console.log('Motos:', this.motos);
-    this.closeNewCustomerModal();
+  saveNewCustomer(): void {
+    const motosValidas = this.motos
+      .filter((moto) => moto.placa.trim() || moto.marca.trim() || moto.modelo.trim())
+      .map((moto) => ({
+        marca: moto.marca.trim(),
+        modelo: moto.modelo.trim(),
+        placa: moto.placa.trim(),
+      }));
+
+    const payload = {
+      nombre: this.newCustomerForm.nombre.trim(),
+      telefono: this.newCustomerForm.telefono.trim(),
+      correo: this.newCustomerForm.email.trim(),
+      documento: this.newCustomerForm.documento.trim(),
+      tipoDocumento: Number(this.newCustomerForm.tipoDocumento),
+      motos: motosValidas,
+    };
+
+    console.log('Payload enviado:', payload);
+
+    this.customerService.crearClienteConMotos(payload).subscribe({
+      next: (response) => {
+        console.log('Cliente creado:', response);
+        this.closeNewCustomerModal();
+        this.cargarClientes();
+      },
+      error: (error) => {
+        console.log('Error creando cliente:', error);
+      },
+    });
   }
 
   get totalMotos(): number {

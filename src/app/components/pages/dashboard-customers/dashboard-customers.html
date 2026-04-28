@@ -137,6 +137,23 @@
           </div>
 
           <div class="form-group">
+            <label for="tipoDocumento">Tipo de documento</label>
+            <select id="tipoDocumento" [(ngModel)]="newCustomerForm.tipoDocumento" name="tipoDocumento">
+              <option [ngValue]="1">Registro Civil</option>
+              <option [ngValue]="2">Tarjeta de Identidad</option>
+              <option [ngValue]="3">Cédula de Ciudadanía</option>
+              <option [ngValue]="4">Cédula de Extranjería</option>
+              <option [ngValue]="5">Permiso por Protección Temporal</option>
+              <option [ngValue]="6">Pasaporte</option>
+              <option [ngValue]="7">NIT</option>
+              <option [ngValue]="8">NUIP</option>
+              <option [ngValue]="9">Adulto sin identificación</option>
+              <option [ngValue]="10">Menor sin identificación</option>
+              <option [ngValue]="11">Carné Diplomático</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label for="documento">Documento</label>
             <input id="documento" type="text" placeholder="Ej. 123456789" [(ngModel)]="newCustomerForm.documento"
               name="documento" />
@@ -203,7 +220,6 @@
           </div>
           }
 
-
           <button type="button" class="add-moto-btn" (click)="agregarMoto()">
             + Agregar otra moto
           </button>
@@ -213,8 +229,7 @@
           <button type="button" class="btn-cancel" (click)="closeNewCustomerModal()">
             Cancelar
           </button>
-
-          <button type="button" class="btn-save" (click)="saveNewCustomerMock()">
+          <button type="button" class="btn-save" (click)="saveNewCustomer()">
             Guardar cliente
           </button>
         </div>
