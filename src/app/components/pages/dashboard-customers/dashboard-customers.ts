@@ -28,6 +28,9 @@ export class DashboardCustomers implements OnInit {
   errorMessage = '';
   showNewCustomerModal = false;
 
+  selectedCustomer: Customer | null = null;
+  showCustomerDetailModal = false;
+
   newCustomerForm = {
     nombre: '',
     telefono: '',
@@ -38,16 +41,14 @@ export class DashboardCustomers implements OnInit {
   motos: MotoForm[] = [];
 
   ngOnInit(): void {
-    this.cargarClientes();
+    this.loadCustomers();
   }
 
-
-
-  cargarClientes(): void {
+  loadCustomers(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.customerService.getClientes().subscribe({
+    this.customerService.getCustomersBikes().subscribe({
       next: (data) => {
         console.log('Clientes desde API:', data);
         this.customers = data;
@@ -115,7 +116,7 @@ export class DashboardCustomers implements OnInit {
       next: (response) => {
         console.log('Cliente creado:', response);
         this.closeNewCustomerModal();
-        this.cargarClientes();
+        this.loadCustomers();
       },
       error: (error) => {
         console.log('Error creando cliente:', error);
@@ -124,7 +125,10 @@ export class DashboardCustomers implements OnInit {
   }
 
   get totalMotos(): number {
-    return this.customers.reduce((acc, customer) => acc + customer.cantidadMotos, 0);
+    return this.customers.reduce(
+      (acc, customer) => acc + (customer.cantidadMotos ?? customer.motos?.length ?? 0),
+      0
+    );
   }
 
   toggleMotoForm(index: number): void {
@@ -145,7 +149,13 @@ export class DashboardCustomers implements OnInit {
   }
 
   verDetalle(customer: Customer): void {
-    console.log('Ver detalle:', customer);
+    this.selectedCustomer = customer;
+    this.showCustomerDetailModal = true;
+  }
+
+  closeCustomerDetailModal(): void {
+    this.showCustomerDetailModal = false;
+    this.selectedCustomer = null;
   }
 
   editarCliente(customer: Customer): void {

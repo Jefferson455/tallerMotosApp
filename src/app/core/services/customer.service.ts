@@ -35,6 +35,16 @@ export class CustomerService {
     return this.http.get<Customer[]>(this.apiUrl, { headers });
   }
 
+  getCustomersBikes(): Observable<Customer[]> {
+    const token = localStorage.getItem('token') || '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<Customer[]>(`${this.apiUrl}/Motos`, { headers });
+  }
+
   crearClienteConMotos(payload: ClienteMotoCreateRequest): Observable<any> {
     const token = localStorage.getItem('token') || '';
 
