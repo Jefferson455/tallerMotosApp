@@ -20,7 +20,8 @@
   <article class="mini-stat">
     <span>Total motos registradas</span>
     <h3>
-      {{ customers.reduce((acc, customer) => acc + customer.cantidadMotos, 0) }}
+      {{ customers.reduce((acc, customer) =>
+      acc + (customer.cantidadMotos ?? customer.motos?.length ?? 0), 0) }}
     </h3>
   </article>
 </section>
@@ -32,7 +33,7 @@
       <p>Vista general del módulo de clientes</p>
     </div>
 
-    <button class="panel-link" type="button" (click)="cargarClientes()">
+    <button class="panel-link" type="button" (click)="loadCustomers()">
       Recargar
     </button>
   </div>
@@ -70,7 +71,7 @@
           <td>{{ customer.telefono }}</td>
           <td>
             <span class="badge-motos">
-              {{ customer.cantidadMotos }}
+              {{ customer.cantidadMotos ?? customer.motos?.length ?? 0 }}
             </span>
           </td>
           <td>
@@ -78,7 +79,6 @@
               <button type="button" class="btn-action btn-action--view" (click)="verDetalle(customer)">
                 Ver
               </button>
-
               <button type="button" class="btn-action btn-action--edit" (click)="editarCliente(customer)">
                 Editar
               </button>
@@ -134,6 +134,23 @@
             <label for="email">Correo electrónico</label>
             <input id="email" type="email" placeholder="Ej. correo@ejemplo.com" [(ngModel)]="newCustomerForm.email"
               name="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="tipoDocumento">Tipo de documento</label>
+            <select id="tipoDocumento" [(ngModel)]="newCustomerForm.tipoDocumento" name="tipoDocumento">
+              <option [ngValue]="1">Registro Civil</option>
+              <option [ngValue]="2">Tarjeta de Identidad</option>
+              <option [ngValue]="3">Cédula de Ciudadanía</option>
+              <option [ngValue]="4">Cédula de Extranjería</option>
+              <option [ngValue]="5">Permiso por Protección Temporal</option>
+              <option [ngValue]="6">Pasaporte</option>
+              <option [ngValue]="7">NIT</option>
+              <option [ngValue]="8">NUIP</option>
+              <option [ngValue]="9">Adulto sin identificación</option>
+              <option [ngValue]="10">Menor sin identificación</option>
+              <option [ngValue]="11">Carné Diplomático</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -203,7 +220,6 @@
           </div>
           }
 
-
           <button type="button" class="add-moto-btn" (click)="agregarMoto()">
             + Agregar otra moto
           </button>
@@ -213,12 +229,104 @@
           <button type="button" class="btn-cancel" (click)="closeNewCustomerModal()">
             Cancelar
           </button>
-
-          <button type="button" class="btn-save" (click)="saveNewCustomerMock()">
+          <button type="button" class="btn-save" (click)="saveNewCustomer()">
             Guardar cliente
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+}
+
+@if (showCustomerDetailModal && selectedCustomer) {
+<div class="customer-modal-backdrop" (click)="closeCustomerDetailModal()">
+  <div class="customer-modal customer-detail-modal" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Detalle del cliente</p>
+        <h3>{{ selectedCustomer.nombre }}</h3>
+        <span>Información completa del cliente y sus motos registradas.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeCustomerDetailModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <div class="detail-grid">
+        <article class="detail-card">
+          <span>ID cliente</span>
+          <strong>{{ selectedCustomer.id }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Teléfono</span>
+          <strong>{{ selectedCustomer.telefono || 'Sin teléfono' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Correo</span>
+          <strong>{{ selectedCustomer.correo || 'Sin correo' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Documento</span>
+          <strong>{{ selectedCustomer.documento || 'Sin documento' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Tipo documento</span>
+          <strong>
+            {{ selectedCustomer.tipoDocumentoNombre || selectedCustomer.tipoDocumentoCodigo || 'Sin tipo' }}
+          </strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Motos registradas</span>
+          <strong>{{ selectedCustomer.motos?.length || selectedCustomer.cantidadMotos || 0 }}</strong>
+        </article>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section__header">
+          <div>
+            <h4>Motos del cliente</h4>
+            <p>Vehículos asociados a este registro.</p>
+          </div>
+        </div>
+
+        @if (selectedCustomer.motos && selectedCustomer.motos.length > 0) {
+        <div class="motos-detail-list">
+          @for (moto of selectedCustomer.motos; track moto.id) {
+          <article class="moto-detail-card">
+            <div class="moto-detail-card__icon">🏍️</div>
+
+            <div>
+              <h5>{{ moto.marca || 'Marca sin definir' }}</h5>
+              <p>{{ moto.modelo || 'Modelo sin definir' }}</p>
+              <span>Placa: {{ moto.placa || 'Sin placa' }}</span>
+            </div>
+          </article>
+          }
+        </div>
+        } @else {
+        <div class="state-box">
+          Este cliente no tiene motos registradas.
+        </div>
+        }
+      </div>
+
+      <div class="customer-modal__actions">
+        <button type="button" class="btn-cancel" (click)="closeCustomerDetailModal()">
+          Cerrar
+        </button>
+
+        <button type="button" class="btn-save" (click)="editarCliente(selectedCustomer)">
+          Editar cliente
+        </button>
+      </div>
     </div>
   </div>
 </div>

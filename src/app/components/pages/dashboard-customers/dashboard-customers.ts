@@ -28,25 +28,27 @@ export class DashboardCustomers implements OnInit {
   errorMessage = '';
   showNewCustomerModal = false;
 
+  selectedCustomer: Customer | null = null;
+  showCustomerDetailModal = false;
+
   newCustomerForm = {
     nombre: '',
     telefono: '',
     email: '',
     documento: '',
+    tipoDocumento: 1,
   };
   motos: MotoForm[] = [];
 
   ngOnInit(): void {
-    this.cargarClientes();
+    this.loadCustomers();
   }
 
-
-
-  cargarClientes(): void {
+  loadCustomers(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.customerService.getClientes().subscribe({
+    this.customerService.getCustomersBikes().subscribe({
       next: (data) => {
         console.log('Clientes desde API:', data);
         this.customers = data;
@@ -80,6 +82,7 @@ export class DashboardCustomers implements OnInit {
       telefono: '',
       email: '',
       documento: '',
+      tipoDocumento: 1,
     };
 
     this.motos = [this.crearMotoVacia()];
@@ -89,15 +92,43 @@ export class DashboardCustomers implements OnInit {
     this.showNewCustomerModal = false;
   }
 
-  saveNewCustomerMock(): void {
-    console.log('Formulario cliente listo para POST:', this.newCustomerForm);
-    console.log('Cliente:', this.newCustomerForm);
-    console.log('Motos:', this.motos);
-    this.closeNewCustomerModal();
+  saveNewCustomer(): void {
+    const motosValidas = this.motos
+      .filter((moto) => moto.placa.trim() || moto.marca.trim() || moto.modelo.trim())
+      .map((moto) => ({
+        marca: moto.marca.trim(),
+        modelo: moto.modelo.trim(),
+        placa: moto.placa.trim(),
+      }));
+
+    const payload = {
+      nombre: this.newCustomerForm.nombre.trim(),
+      telefono: this.newCustomerForm.telefono.trim(),
+      correo: this.newCustomerForm.email.trim(),
+      documento: this.newCustomerForm.documento.trim(),
+      tipoDocumento: Number(this.newCustomerForm.tipoDocumento),
+      motos: motosValidas,
+    };
+
+    console.log('Payload enviado:', payload);
+
+    this.customerService.crearClienteConMotos(payload).subscribe({
+      next: (response) => {
+        console.log('Cliente creado:', response);
+        this.closeNewCustomerModal();
+        this.loadCustomers();
+      },
+      error: (error) => {
+        console.log('Error creando cliente:', error);
+      },
+    });
   }
 
   get totalMotos(): number {
-    return this.customers.reduce((acc, customer) => acc + customer.cantidadMotos, 0);
+    return this.customers.reduce(
+      (acc, customer) => acc + (customer.cantidadMotos ?? customer.motos?.length ?? 0),
+      0
+    );
   }
 
   toggleMotoForm(index: number): void {
@@ -118,7 +149,13 @@ export class DashboardCustomers implements OnInit {
   }
 
   verDetalle(customer: Customer): void {
-    console.log('Ver detalle:', customer);
+    this.selectedCustomer = customer;
+    this.showCustomerDetailModal = true;
+  }
+
+  closeCustomerDetailModal(): void {
+    this.showCustomerDetailModal = false;
+    this.selectedCustomer = null;
   }
 
   editarCliente(customer: Customer): void {

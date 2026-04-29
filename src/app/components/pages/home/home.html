@@ -11,7 +11,7 @@
       </p>
 
       <div class="home-hero__actions">
-        <button class="btn-primary" (click)="openServicesModal()">Agenda tu servicio</button>
+        <button class="btn-primary" (click)="openFormServiceModal()">Agenda tu servicio</button>
       </div>
     </div>
 
@@ -228,7 +228,7 @@
       </div>
 
       <div class="contact-highlight">
-        🛠️ Agenda tu servicio y lleva el control de tu taller de una forma más clara y profesional.
+        ✉️ ¡Contactanos responderemos lo más breve posible!
       </div>
     </div>
 
@@ -237,6 +237,79 @@
         Listo
       </button>
     </div>
+
+  </div>
+</div>
+}
+
+<!--! Modal Agendar Servicio -->
+@if (isFormServiceModalOpen) {
+<div class="service-modal-backdrop" (click)="closeFormServiceModal()">
+  <div class="service-modal schedule-modal" (click)="$event.stopPropagation()">
+
+    <button class="service-modal__close" type="button" (click)="closeFormServiceModal()">
+      ✕
+    </button>
+
+    <span class="service-modal__tag">AGENDAR SERVICIO</span>
+
+    <h2>Agendamos tu taller</h2>
+
+    <p class="service-modal__subtitle">
+      🛠️ Agenda tu servicio y lleva el control de tu taller de una forma más clara y profesional.
+    </p>
+
+    <form class="schedule-form">
+      <div class="schedule-form__grid">
+        <div class="schedule-field">
+          <label for="serviceName">Nombre completo</label>
+          <input id="serviceName" type="text" name="serviceName" placeholder="Ej. Jefferson Guzmán"
+            [(ngModel)]="serviceRequestForm.nombre" />
+        </div>
+
+        <div class="schedule-field">
+          <label for="servicePhone">Teléfono</label>
+          <input id="servicePhone" type="text" name="servicePhone" placeholder="Ej. 3001234567"
+            [(ngModel)]="serviceRequestForm.telefono" />
+        </div>
+
+        <div class="schedule-field">
+          <label for="serviceEmail">Correo electrónico</label>
+          <input id="serviceEmail" type="email" name="serviceEmail" placeholder="Ej. correo@ejemplo.com"
+            [(ngModel)]="serviceRequestForm.correo" />
+        </div>
+
+        <div class="schedule-field schedule-field--full">
+          <label for="serviceType">Por dónde es más preferible que nos comuniquemos?</label>
+          <select id="serviceType" name="serviceType" [(ngModel)]="serviceRequestForm.tipoServicio">
+            <option value="">Selecciona una opción</option>
+            <option value="Whatsapp">Whatsapp</option>
+            <option value="Llamada">Llamada</option>
+            <option value="Correo">Correo</option>
+          </select>
+        </div>
+
+        <div class="schedule-field schedule-field--full">
+          <label for="serviceDescription">Dejanos un comentario...</label>
+          <textarea id="serviceDescription" name="serviceDescription" rows="4"
+            placeholder="Cuentanos un poco más de tu taller..." [(ngModel)]="serviceRequestForm.descripcion"></textarea>
+        </div>
+      </div>
+
+      <div class="schedule-note">
+        Pendiente a tu correo o whatsapp nos estaremos comunicando lo más pronto posible para brindarte toda la info
+      </div>
+
+      <div class="service-modal__actions">
+        <button class="btn-form-cancel" type="button" (click)="closeFormServiceModal()">
+          Cancelar
+        </button>
+
+        <button class="btn-form-send" type="button" (click)="saveServiceRequestMock()">
+          Enviar solicitud
+        </button>
+      </div>
+    </form>
 
   </div>
 </div>
