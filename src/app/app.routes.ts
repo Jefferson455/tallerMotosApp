@@ -35,7 +35,10 @@ export const routes: Routes = [
         path: 'bikes',
         component: DashboardBikes,
       },
-
+      {
+        path: 'services',
+        component: DashboardServices,
+      }
     ],
   },
   {

@@ -2,7 +2,12 @@
   <div class="sidebar__top">
     <div class="sidebar__brand">
       <div class="sidebar__logo">
-        <img src="/images/brand.png" alt="TallerMotosApp logo">
+        @if (rolUser == "Administrador") {
+        <i class="fa-solid fa-user-tie"></i>
+        }
+        @if (rolUser == "Mecánico") {
+        <i class="fa-solid fa-user-gear"></i>
+        }
       </div>
 
       <div class="sidebar__brand-text">
@@ -14,35 +19,50 @@
     <nav class="sidebar__nav">
       <a class="sidebar__item" routerLink="/dashboard" routerLinkActive="sidebar__item--active"
         [routerLinkActiveOptions]="{ exact: true }">
-        <span class="sidebar__icon">🏠</span>
+        <span class="sidebar__icon"><i class="fa-solid fa-house-user"></i></span>
         <span>Dashboard</span>
       </a>
-
+      @if (rolUser == "Administrador") {
       <a class="sidebar__item" routerLink="/dashboard/customers" routerLinkActive="sidebar__item--active">
-        <span class="sidebar__icon">👥</span>
+        <span class="sidebar__icon"><i class="fa-solid fa-users"></i></span>
         <span>Clientes</span>
       </a>
 
+      }
       <a class="sidebar__item" routerLink="/dashboard/bikes" routerLinkActive="sidebar__item--active">
-        <span class="sidebar__icon">🏍️</span>
+        <span class="sidebar__icon"><i class="fa-solid fa-motorcycle"></i></span>
         <span>Motos</span>
       </a>
 
+      @if (rolUser == "Administrador") {
       <a class="sidebar__item" routerLink="/dashboard/services">
-        <span class="sidebar__icon">🛠️</span>
+        <span class="sidebar__icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
         <span>Servicios</span>
       </a>
 
       <a class="sidebar__item" routerLink="/dashboard/reminders">
-        <span class="sidebar__icon">📅</span>
+        <span class="sidebar__icon"><i class="fa-solid fa-business-time"></i></span>
         <span>Recordatorios</span>
       </a>
+      }
+
+      @if (rolUser === "Mecánico") {
+      <a class="sidebar__item" routerLink="/dashboard/services">
+        <span class="sidebar__icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+        <span>Mis servicios</span>
+      </a>
+
+      <a class="sidebar__item" routerLink="/dashboard/reminders">
+        <span class="sidebar__icon"><i class="fa-solid fa-user-clock"></i></span>
+        <span>Mis recordatorios</span>
+      </a>
+      }
     </nav>
   </div>
 
   <div class="sidebar__bottom">
     <button class="sidebar__logout" type="button" (click)="openLogoutModal()">
-      <span>↩</span>
+      <span><i class="fa-solid fa-person-walking-arrow-right"></i></span>
       <span>Cerrar sesión</span>
     </button>
   </div>
