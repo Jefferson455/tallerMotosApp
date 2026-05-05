@@ -5,6 +5,9 @@ import { Dashboard } from './components/pages/dashboard/dashboard';
 import { authGuard } from './core/guards/auth-guard';
 import { DashboardCustomers } from './components/pages/dashboard-customers/dashboard-customers';
 import { DashboardLayout } from './components/pages/dashboard-layout/dashboard-layout';
+import { DashboardBikes } from './components/pages/dashboard-bikes/dashboard-bikes';
+import { DashboardServices } from './components/pages/dashboard-services/dashboard-services';
+import { DashboardReminders } from './components/pages/dashboard-reminders/dashboard-reminders';
 
 export const routes: Routes = [
   {
@@ -28,6 +31,11 @@ export const routes: Routes = [
         path: 'customers',
         component: DashboardCustomers,
       },
+      {
+        path: 'bikes',
+        component: DashboardBikes,
+      },
+
     ],
   },
   {
