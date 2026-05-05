@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Customer } from '../interfaces/customer.interface';
+import { Customer, updateCustomerRequest } from '../interfaces/customer.interface';
 import { Observable } from 'rxjs';
 
 export interface MotoCreateRequest {
@@ -53,5 +53,18 @@ export class CustomerService {
     });
 
     return this.http.post(`${this.apiUrl}/Motos`, payload, { headers });
+  }
+
+  updateCustomer(id: number, payload: updateCustomerRequest): Observable<string> {
+    const token = localStorage.getItem('token') || '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.put(`${this.apiUrl}/${id}`, payload, {
+      headers,
+      responseType: 'text',
+    });
   }
 }
