@@ -38,7 +38,11 @@ export const routes: Routes = [
       {
         path: 'services',
         component: DashboardServices,
-      }
+      },
+      {
+        path: 'reminders',
+        component: DashboardReminders,
+      },
     ],
   },
   {

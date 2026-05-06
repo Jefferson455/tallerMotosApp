@@ -1,0 +1,76 @@
+<section class="reminders-header">
+  <div>
+    <p class="reminders-header__eyebrow">Recordatorios</p>
+    <h1>Gestión de recordatorios</h1>
+    <span>Control de mantenimientos y notificaciones.</span>
+  </div>
+</section>
+
+<section class="reminders-stats">
+  <article class="mini-stat">
+    <span>Pendientes</span>
+    <h3>{{ pendientes }}</h3>
+  </article>
+
+  <article class="mini-stat">
+    <span>Enviados</span>
+    <h3>{{ enviados }}</h3>
+  </article>
+</section>
+
+<section class="reminders-panel">
+
+  @if (isLoading) {
+  <div class="state-box">Cargando...</div>
+  }
+
+  @if (!isLoading) {
+  <div class="table-wrap">
+    <table class="reminders-table">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Moto</th>
+          <th>Placa</th>
+          <th>Próximo servicio</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (r of reminders; track r.id) {
+        <tr>
+          <td>{{ r.clienteNombre }}</td>
+          <td>{{ r.motoMarca }} {{ r.motoModelo }}</td>
+          <td>
+            <span class="plate-badge">{{ r.motoPlaca }}</span>
+          </td>
+          <td>
+            <span [class.vencido]="esVencido(r.fechaProximaNotificacion)">
+              {{ r.fechaProximaNotificacion | date:'mediumDate' }}
+            </span>
+          </td>
+          <td>
+            <span class="status" [class.pending]="r.estado === 'PENDIENTE'">
+              {{ r.estado }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-box">
+              <button class="btn-action-wsp" (click)="enviarWhatsApp(r)">
+                WhatsApp
+              </button>
+
+              <button class="btn-action-mail" (click)="enviarCorreo(r)">
+                Correo
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</section>
