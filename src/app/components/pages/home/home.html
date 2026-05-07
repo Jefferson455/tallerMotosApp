@@ -41,7 +41,7 @@
   <div class="service-modal" (click)="$event.stopPropagation()">
 
     <button class="service-modal__close" (click)="closeServiceModal()">
-      ✕
+      <i class="fa-regular fa-circle-xmark"></i>
     </button>
 
     <span class="service-modal__tag">SERVICIOS</span>
@@ -55,7 +55,7 @@
     <div class="service-list">
 
       <div class="service-item" [class.service-item--active]="activeServiceIndex === 0" (click)="toggleService(0)">
-        <span>👤</span>
+        <span><i class="fa-solid fa-user-group"></i></span>
         <div class="service-item__content">
           <strong>Gestión de clientes</strong>
           <small>Registro completo de clientes</small>
@@ -70,7 +70,7 @@
       </div>
 
       <div class="service-item" [class.service-item--active]="activeServiceIndex === 1" (click)="toggleService(1)">
-        <span>🏍️</span>
+        <span><i class="fa-solid fa-person-biking"></i></span>
         <div class="service-item__content">
           <strong>Registro de motocicletas</strong>
           <small>Control por placa y propietario</small>
@@ -85,7 +85,7 @@
       </div>
 
       <div class="service-item" [class.service-item--active]="activeServiceIndex === 2" (click)="toggleService(2)">
-        <span>🛠️</span>
+        <span><i class="fa-solid fa-wrench"></i></span>
         <div class="service-item__content">
           <strong>Servicios realizados</strong>
           <small>Historial de mantenimientos</small>
@@ -100,7 +100,7 @@
       </div>
 
       <div class="service-item" [class.service-item--active]="activeServiceIndex === 3" (click)="toggleService(3)">
-        <span>⏰</span>
+        <span><i class="fa-solid fa-alarm-clock"></i></span>
         <div class="service-item__content">
           <strong>Recordatorios</strong>
           <small>Próximos cambios y revisiones</small>
@@ -115,7 +115,7 @@
       </div>
 
       <div class="service-item" [class.service-item--active]="activeServiceIndex === 4" (click)="toggleService(4)">
-        <span>🔐</span>
+        <span><i class="fa-solid fa-user-lock"></i></span>
         <div class="service-item__content">
           <strong>Acceso seguro</strong>
           <small>Login y control administrativo</small>
@@ -147,7 +147,7 @@
   <div class="service-modal about-modal" (click)="$event.stopPropagation()">
 
     <button class="service-modal__close" (click)="closeAboutModal()">
-      ✕
+      <i class="fa-regular fa-circle-xmark"></i>
     </button>
 
     <span class="service-modal__tag">NOSOTROS</span>
@@ -171,7 +171,8 @@
       </p>
 
       <div class="about-highlight">
-        🏍️ Tecnología pensada para talleres reales, con procesos simples y útiles.
+        <i class="fa-solid fa-person-biking"></i> Tecnología pensada para talleres reales, con procesos simples y
+        útiles.
       </div>
     </div>
 
@@ -191,7 +192,7 @@
   <div class="service-modal contact-modal" (click)="$event.stopPropagation()">
 
     <button class="service-modal__close" (click)="closeContactModal()">
-      ✕
+      <i class="fa-regular fa-circle-xmark"></i>
     </button>
 
     <span class="service-modal__tag">CONTACTO</span>
@@ -204,7 +205,7 @@
 
     <div class="contact-content">
       <div class="contact-item">
-        <span>📍</span>
+        <span><i class="fa-solid fa-location-dot"></i></span>
         <div>
           <strong>Ubicación</strong>
           <small>Bogotá, Colombia</small>
@@ -212,7 +213,7 @@
       </div>
 
       <div class="contact-item">
-        <span>📞</span>
+        <span><i class="fa-solid fa-phone"></i></span>
         <div>
           <strong>Teléfono</strong>
           <small>+57 300 123 4567</small>
@@ -220,7 +221,7 @@
       </div>
 
       <div class="contact-item">
-        <span>✉️</span>
+        <span><i class="fa-solid fa-envelope"></i></span>
         <div>
           <strong>Correo</strong>
           <small>contacto&#64;tallermotosapp.com</small>
@@ -228,7 +229,7 @@
       </div>
 
       <div class="contact-highlight">
-        ✉️ ¡Contactanos responderemos lo más breve posible!
+        <i class="fa-solid fa-face-grin-stars"></i> ¡Contactanos responderemos lo más breve posible!
       </div>
     </div>
 
@@ -248,7 +249,7 @@
   <div class="service-modal schedule-modal" (click)="$event.stopPropagation()">
 
     <button class="service-modal__close" type="button" (click)="closeFormServiceModal()">
-      ✕
+      <i class="fa-regular fa-circle-xmark"></i>
     </button>
 
     <span class="service-modal__tag">AGENDAR SERVICIO</span>
@@ -256,7 +257,8 @@
     <h2>Agendamos tu taller</h2>
 
     <p class="service-modal__subtitle">
-      🛠️ Agenda tu servicio y lleva el control de tu taller de una forma más clara y profesional.
+      <i class="fa-solid fa-screwdriver-wrench"></i> Agenda tu servicio y lleva el control de tu taller de una forma más
+      clara y profesional.
     </p>
 
     <form class="schedule-form">

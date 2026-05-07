@@ -1,5 +1,6 @@
 @use "variables" as v;
 
+//!Desktop
 :host {
   display: block;
   font-family: v.$font-exo;
@@ -153,50 +154,6 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 18px 30px rgba(249, 115, 22, 0.3);
-  }
-}
-
-/* .btn-secondary {
-  border: 1px solid rgba(17, 24, 39, 0.12);
-  background: #ffffff;
-  color: #111827;
-
-  &:hover {
-    border-color: #f97316;
-    color: #f97316;
-    transform: translateY(-2px);
-  }
-} */
-
-@media (max-width: 992px) {
-  .home-hero {
-    min-height: auto;
-    padding: 2rem 0 3rem;
-
-    &__content {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-
-    &__text {
-      order: 1;
-    }
-
-    &__image {
-      order: 2;
-
-      img {
-        max-width: 520px;
-      }
-    }
-
-    h1 {
-      max-width: 100%;
-    }
-
-    p {
-      max-width: 100%;
-    }
   }
 }
 
@@ -371,7 +328,6 @@
 }
 
 //! Modal About
-
 .about-modal {
   max-width: 680px;
 }
@@ -585,40 +541,212 @@
   background: rgba(249, 115, 22, 0.45);
 }
 
-@media (max-width: 768px) {
-  .schedule-form__grid {
-    grid-template-columns: 1fr;
-    max-height: 58dvh;
-  }
-}
+//! Responsive
 
-@media (max-width: 576px) {
+//!Tablet
+@media (max-width: 768px) {
   .home-hero {
+    padding: 2rem 0 3rem;
+
     &__content {
-      width: min(92%, 100%);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding-inline: 1.25rem;
+    }
+
+    &__text {
+      order: 2;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    &__image {
+      order: 1;
+
+      img {
+        max-width: 100%;
+      }
+    }
+
+    &__brands-block {
+      order: 3;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+
+    &__brands-title {
+      white-space: normal;
+      font-size: 1rem;
+    }
+
+    &__brands {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 1rem 1.4rem;
+      overflow: visible;
+
+      img {
+        height: 24px;
+        max-width: 86px;
+      }
     }
 
     h1 {
-      font-size: 2.4rem;
+      max-width: 100%;
+      font-size: clamp(2.25rem, 11vw, 3rem);
+      line-height: 1.08;
 
       span {
-        font-size: 1.35rem;
+        font-size: clamp(1.35rem, 6vw, 1.8rem);
       }
     }
 
     p {
+      max-width: 100%;
       font-size: 1rem;
-      line-height: 1.7;
+      line-height: 1.65;
     }
 
     &__actions {
       width: 100%;
-      flex-direction: column;
-      align-items: stretch;
+    }
+
+    .btn-primary {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+      padding-inline: 1rem;
+    }
+  }
+  .service-modal-backdrop {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .service-modal {
+    width: min(100%, 520px);
+    max-width: 100%;
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+
+  .schedule-modal {
+    width: min(100%, 520px);
+    max-width: 100%;
+    max-height: 86dvh;
+  }
+
+  .schedule-form__grid {
+    grid-template-columns: 1fr;
+    max-height: 48dvh;
+    padding-right: 0.25rem;
+  }
+
+  .service-modal h2 {
+    font-size: 1.65rem;
+    line-height: 1.15;
+    padding-right: 2.5rem;
+  }
+
+  .service-modal__subtitle {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .schedule-note {
+    font-size: 0.9rem;
+  }
+
+  .service-modal__actions {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+
+    button {
+      width: 100%;
+      margin: 0;
+    }
+  }
+}
+
+//! Mobile
+@media (max-width: 480px) {
+  .home-hero {
+    padding-top: 100px;
+    &__content {
+      padding-inline: 1rem;
+    }
+
+    &__image {
+      display: none;
+    }
+
+    &__brands-block {
+      margin-top: 0.5rem;
+    }
+
+    &__brands {
+      gap: 0.8rem 1rem;
+
+      img {
+        height: 22px;
+        max-width: 74px;
+      }
+    }
+  }
+  .service-modal-backdrop {
+    padding: 0.75rem;
+  }
+
+  .service-modal {
+    padding: 1.25rem;
+    border-radius: 22px;
+  }
+
+  .schedule-modal {
+    width: 100%;
+    max-height: 84dvh;
+  }
+
+  .service-modal__close {
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .service-modal__tag {
+    font-size: 0.72rem;
+  }
+
+  .service-modal h2 {
+    font-size: 1.45rem;
+  }
+
+  .schedule-form__grid {
+    max-height: 46dvh;
+  }
+
+  .schedule-field {
+    input,
+    select {
+      height: 48px;
+    }
+
+    textarea {
+      min-height: 96px;
     }
   }
 
-  .btn-primary {
-    width: 100%;
+  .schedule-note {
+    padding: 0.85rem 0.95rem;
+    font-size: 0.86rem;
+    border-radius: 16px;
   }
 }
