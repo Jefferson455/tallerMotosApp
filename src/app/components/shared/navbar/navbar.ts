@@ -12,14 +12,28 @@ export class Navbar {
   @Output() aboutClick = new EventEmitter<void>();
   @Output() contactClick = new EventEmitter<void>();
 
-  onServicesClick(): void {
-    this.servicesClick.emit();
-  }
-  onAboutClick(): void {
-    this.aboutClick.emit();
-  }
-  onContactClick(): void {
-    this.contactClick.emit();
+  isMobileMenuOpen = false;
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+  }
+
+  onServicesClick(): void {
+    this.servicesClick.emit();
+    this.closeMobileMenu();
+  }
+
+  onAboutClick(): void {
+    this.aboutClick.emit();
+    this.closeMobileMenu();
+  }
+
+  onContactClick(): void {
+    this.contactClick.emit();
+    this.closeMobileMenu();
+  }
 }

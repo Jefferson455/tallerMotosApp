@@ -3,5 +3,6 @@ export interface Bike {
   marca: string;
   modelo: string;
   placa: string;
-  clienteId: number;
+  clienteId?: number;
+  nombreCliente?: string;
 }

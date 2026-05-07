@@ -239,6 +239,7 @@
 </div>
 }
 
+<!--! Modal de detalles  -->
 @if (showCustomerDetailModal && selectedCustomer) {
 <div class="customer-modal-backdrop" (click)="closeCustomerDetailModal()">
   <div class="customer-modal customer-detail-modal" (click)="$event.stopPropagation()">
@@ -327,6 +328,61 @@
           Editar cliente
         </button>
       </div>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal de editar  -->
+@if (showEditCustomerModal) {
+<div class="customer-modal-backdrop" (click)="closeEditCustomerModal()">
+  <div class="customer-modal" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Editar cliente</p>
+        <h3>{{ editCustomerForm.nombre || 'Cliente' }}</h3>
+        <span>Actualiza la información básica del cliente.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeEditCustomerModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <form class="customer-form">
+        <div class="customer-form__grid">
+          <div class="form-group">
+            <label for="editNombre">Nombre completo</label>
+            <input id="editNombre" type="text" [(ngModel)]="editCustomerForm.nombre" name="editNombre" />
+          </div>
+
+          <div class="form-group">
+            <label for="editTelefono">Teléfono</label>
+            <input id="editTelefono" type="text" [(ngModel)]="editCustomerForm.telefono" name="editTelefono" />
+          </div>
+
+          <div class="form-group">
+            <label for="editCorreo">Correo electrónico</label>
+            <input id="editCorreo" type="email" [(ngModel)]="editCustomerForm.correo" name="editCorreo" />
+          </div>
+
+          <div class="form-group">
+            <label for="editDocumento">Documento</label>
+            <input id="editDocumento" type="text" [(ngModel)]="editCustomerForm.documento" name="editDocumento" />
+          </div>
+        </div>
+
+        <div class="customer-modal__actions">
+          <button type="button" class="btn-cancel" (click)="closeEditCustomerModal()">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-save" (click)="updateCustomer()">
+            Guardar cambios
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

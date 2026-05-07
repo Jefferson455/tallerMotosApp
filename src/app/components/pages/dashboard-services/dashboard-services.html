@@ -1,0 +1,100 @@
+<section class="services-header">
+  <div>
+    <p class="services-header__eyebrow">Servicios</p>
+    <h1>Gestión de servicios</h1>
+    <span>Consulta los trabajos realizados y registrados en el taller.</span>
+  </div>
+
+  <div class="services-header__actions">
+    <button class="btn-light" type="button">Exportar</button>
+    <button class="btn-main" type="button">Nuevo servicio</button>
+  </div>
+</section>
+
+<section class="services-stats">
+  <article class="mini-stat">
+    <span>Total servicios</span>
+    <h3>{{ services.length }}</h3>
+  </article>
+
+  <article class="mini-stat">
+    <span>Ingresos registrados</span>
+    <h3>{{ totalIngresos | currency:'COP':'symbol-narrow':'1.0-0' }}</h3>
+  </article>
+</section>
+
+<section class="services-panel">
+  <div class="services-panel__header">
+    <div>
+      <h2>Listado de servicios</h2>
+      <p>Vista general del módulo de servicios</p>
+    </div>
+
+    <button class="panel-link" type="button" (click)="loadServices()">
+      Recargar
+    </button>
+  </div>
+
+  @if (isLoading) {
+  <div class="state-box">Cargando servicios...</div>
+  }
+
+  @if (!isLoading && errorMessage) {
+  <div class="state-box state-box--error">
+    {{ errorMessage }}
+  </div>
+  }
+
+  @if (!isLoading && !errorMessage) {
+  <div class="table-wrap">
+    <table class="services-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Descripción</th>
+          <th>Moto</th>
+          <th>Técnico</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (service of services; track service.id) {
+        <tr>
+          <td>{{ service.id }}</td>
+          <td>{{ service.descripcion }}</td>
+          <td>
+            <span class="plate-badge">{{ service.motoPlaca }}</span>
+          </td>
+          <td>{{ service.usuarioNombre }}</td>
+          <td>
+            <span class="price-badge">
+              {{ service.precio | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-box">
+              <button class="btn-action btn-action--view" type="button" (click)="verDetalle(service)">
+                Ver
+              </button>
+              <button class="btn-action btn-action--edit" type="button" (click)="editarServicio(service)">
+                Editar
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+
+        @if (services.length === 0) {
+        <tr>
+          <td colspan="6" class="empty-row">
+            No hay servicios registrados.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</section>

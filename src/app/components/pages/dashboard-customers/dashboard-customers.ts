@@ -30,6 +30,7 @@ export class DashboardCustomers implements OnInit {
 
   selectedCustomer: Customer | null = null;
   showCustomerDetailModal = false;
+  showEditCustomerModal = false;
 
   newCustomerForm = {
     nombre: '',
@@ -38,6 +39,15 @@ export class DashboardCustomers implements OnInit {
     documento: '',
     tipoDocumento: 1,
   };
+
+  editCustomerForm = {
+    id: 0,
+    nombre: '',
+    telefono: '',
+    correo: '',
+    documento: '',
+  };
+
   motos: MotoForm[] = [];
 
   ngOnInit(): void {
@@ -134,6 +144,7 @@ export class DashboardCustomers implements OnInit {
   toggleMotoForm(index: number): void {
     this.motos[index].abierta = !this.motos[index].abierta;
   }
+
   agregarMoto(): void {
     this.motos.push({
       placa: '',
@@ -141,6 +152,42 @@ export class DashboardCustomers implements OnInit {
       modelo: '',
       anio: '',
       abierta: true,
+    });
+  }
+
+  openEditCustomerModal(customer: Customer): void {
+    this.editCustomerForm = {
+      id: customer.id,
+      nombre: customer.nombre || '',
+      telefono: customer.telefono || '',
+      correo: customer.correo || '',
+      documento: customer.documento || '',
+    };
+
+    this.showEditCustomerModal = true;
+  }
+
+  closeEditCustomerModal(): void {
+    this.showEditCustomerModal = false;
+  }
+
+  updateCustomer(): void {
+    const payload = {
+      nombre: this.editCustomerForm.nombre.trim(),
+      telefono: this.editCustomerForm.telefono.trim(),
+      correo: this.editCustomerForm.correo.trim(),
+      documento: this.editCustomerForm.documento.trim(),
+    };
+
+    this.customerService.updateCustomer(this.editCustomerForm.id, payload).subscribe({
+      next: (response) => {
+        console.log('Cliente actualizado:', response);
+        this.closeEditCustomerModal();
+        this.loadCustomers();
+      },
+      error: (error) => {
+        console.error('Error actualizando cliente:', error);
+      },
     });
   }
 
@@ -159,7 +206,7 @@ export class DashboardCustomers implements OnInit {
   }
 
   editarCliente(customer: Customer): void {
-    console.log('Editar cliente:', customer);
+    this.openEditCustomerModal(customer);
   }
 
 }

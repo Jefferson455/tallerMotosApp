@@ -1,0 +1,96 @@
+<section class="bikes-header">
+  <div>
+    <p class="bikes-header__eyebrow">Motos</p>
+    <h1>Gestión de motos</h1>
+    <span>Consulta las motocicletas registradas en el taller.</span>
+  </div>
+
+  <div class="bikes-header__actions">
+    <button class="btn-light" type="button">Exportar</button>
+    <button class="btn-main" type="button">Nueva moto</button>
+  </div>
+</section>
+
+<section class="bikes-stats">
+  <article class="mini-stat">
+    <span>Total motos</span>
+    <h3>{{ bikes.length }}</h3>
+  </article>
+
+  <article class="mini-stat">
+    <span>Clientes asociados</span>
+    <h3>{{ asocciatedCustomers }}</h3>
+  </article>
+</section>
+
+<section class="bikes-panel">
+  <div class="bikes-panel__header">
+    <div>
+      <h2>Listado de motos</h2>
+      <p>Vista general del módulo de motocicletas</p>
+    </div>
+
+    <button class="panel-link" type="button" (click)="loadBikes()">
+      Recargar
+    </button>
+  </div>
+
+  @if (isLoading) {
+  <div class="state-box">Cargando motos...</div>
+  }
+
+  @if (!isLoading && errorMessage) {
+  <div class="state-box state-box--error">
+    {{ errorMessage }}
+  </div>
+  }
+
+  @if (!isLoading && !errorMessage) {
+  <div class="table-wrap">
+    <table class="bikes-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Placa</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>Cliente</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (bike of bikes; track bike.id) {
+        <tr>
+          <td>{{ bike.id }}</td>
+          <td>
+            <span class="plate-badge">{{ bike.placa }}</span>
+          </td>
+          <td>{{ bike.marca }}</td>
+          <td>{{ bike.modelo }}</td>
+          <td>{{ bike.nombreCliente || 'Sin cliente' }}</td>
+          <td>
+            <div class="actions-box">
+              <button class="btn-action btn-action--view" type="button" (click)="verDetalle(bike)">
+                Ver
+              </button>
+              <button class="btn-action btn-action--edit" type="button" (click)="editarMoto(bike)">
+                Editar
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+
+        @if (bikes.length === 0) {
+        <tr>
+          <td colspan="6" class="empty-row">
+            No hay motos registradas.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</section>

@@ -12,3 +12,10 @@ export interface Customer {
   tipoDocumentoNombre?: string;
   motos?: Bike[];
 }
+
+export interface updateCustomerRequest {
+  nombre: string;
+  telefono: string;
+  correo: string;
+  documento: string;
+}

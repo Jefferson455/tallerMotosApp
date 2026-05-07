@@ -1,7 +1,7 @@
 <nav class="navbar">
   <div class="navbar__brand">
     <div class="navbar__logo">
-      <img [src]="'/images/brand.png'">
+      <img [src]="'/images/brand.png'" alt="El Garaje logo" />
     </div>
   </div>
 
@@ -10,8 +10,49 @@
     <li><a type="button" (click)="onAboutClick()">Nosotros</a></li>
     <li><a type="button" (click)="onContactClick()">Contacto</a></li>
   </ul>
-  <button class="btn-login" type="button" routerLink='/login'>
-    Login
-  </button>
 
+  <div class="navbar__actions">
+    <button class="navbar__hamburger" type="button" aria-label="Abrir menú"
+      [class.navbar__hamburger--active]="isMobileMenuOpen" (click)="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <button class="btn-login" type="button" routerLink="/login">
+      Login
+    </button>
+  </div>
 </nav>
+
+@if (isMobileMenuOpen) {
+<div class="mobile-menu-backdrop" (click)="closeMobileMenu()">
+  <aside class="mobile-menu" (click)="$event.stopPropagation()">
+    <div class="mobile-menu__header">
+      <div>
+        <span>MENÚ</span>
+        <h3>El Garaje</h3>
+      </div>
+
+      <button class="mobile-menu__close" type="button" (click)="closeMobileMenu()">
+        ✕
+      </button>
+    </div>
+
+    <button class="mobile-menu__item" type="button" (click)="onServicesClick()">
+      <span><i class="fa-solid fa-wrench"></i></span>
+      Servicios
+    </button>
+
+    <button class="mobile-menu__item" type="button" (click)="onAboutClick()">
+      <span>🏍️</span>
+      Nosotros
+    </button>
+
+    <button class="mobile-menu__item" type="button" (click)="onContactClick()">
+      <span>📞</span>
+      Contacto
+    </button>
+  </aside>
+</div>
+}

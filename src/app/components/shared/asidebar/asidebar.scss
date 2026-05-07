@@ -44,11 +44,9 @@
     flex-shrink: 0;
     backdrop-filter: blur(6px);
 
-    img {
-      width: 78%;
-      height: 78%;
-      object-fit: contain;
-      display: block;
+    i {
+      font-size: 1.6rem;
+      line-height: 1;
     }
   }
 
@@ -74,7 +72,7 @@
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 15%;
   }
 
   &__item {
