@@ -51,11 +51,6 @@
         <span class="sidebar__icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
         <span>Mis servicios</span>
       </a>
-
-      <a class="sidebar__item" routerLink="/dashboard/reminders">
-        <span class="sidebar__icon"><i class="fa-solid fa-user-clock"></i></span>
-        <span>Mis recordatorios</span>
-      </a>
       }
     </nav>
   </div>
@@ -70,7 +65,7 @@
 @if (showLogoutModal) {
 <div class="logout-modal-backdrop" (click)="closeLogoutModal()">
   <div class="logout-modal" (click)="$event.stopPropagation()">
-    <div class="logout-modal__icon">🔒</div>
+    <div class="logout-modal__icon"><i class="fa-solid fa-person-circle-question"></i></div>
 
     <h3>¿Cerrar sesión?</h3>
     <p>
