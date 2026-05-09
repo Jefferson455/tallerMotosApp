@@ -25,6 +25,7 @@ export class DashboardCustomers implements OnInit {
   private customerService = inject(CustomerService);
   private cdr = inject(ChangeDetectorRef);
 
+
   customers: Customer[] = [];
   isLoading = true;
   errorMessage = '';
@@ -236,37 +237,50 @@ export class DashboardCustomers implements OnInit {
 
     this.showDeleteCustomerModal = false;
     this.customerToDelete = null;
+    this.cdr.detectChanges();
   }
 
   confirmDeleteCustomer(): void {
-    if (!this.customerToDelete) return;
+    if (!this.customerToDelete || this.isDeletingCustomer) return;
 
     this.isDeletingCustomer = true;
+    this.cdr.detectChanges();
 
     this.customerService.deleteCustomer(this.customerToDelete.id).subscribe({
       next: () => {
         const deletedName = this.customerToDelete?.nombre ?? 'Cliente';
 
         this.isDeletingCustomer = false;
-        this.closeDeleteCustomerModal();
+        this.showDeleteCustomerModal = false;
+        this.customerToDelete = null;
 
         this.deleteSuccessCustomerName = deletedName;
         this.showDeleteSuccessModal = true;
 
+        this.cdr.detectChanges();
+
         this.loadCustomers();
       },
+
       error: (error) => {
         console.error('Error eliminando cliente:', error);
 
+        const customerName = this.customerToDelete?.nombre ?? 'Cliente';
+
         this.isDeletingCustomer = false;
         this.showDeleteCustomerModal = false;
+        this.customerToDelete = null;
 
-        this.deleteErrorCustomerName = this.customerToDelete?.nombre ?? 'Cliente';
+        this.deleteErrorCustomerName = customerName;
         this.deleteErrorMessage =
-          error?.error ||
-          'No se pudo eliminar el cliente. Intenta nuevamente más tarde.';
+          typeof error?.error === 'string'
+            ? error.error
+            : error?.error?.message ||
+            'No se pudo eliminar el cliente. Intenta nuevamente más tarde.';
 
         this.showDeleteErrorModal = true;
+
+        this.cdr.detectChanges();
       },
     });
   }
@@ -275,6 +289,7 @@ export class DashboardCustomers implements OnInit {
     this.showDeleteErrorModal = false;
     this.deleteErrorMessage = '';
     this.deleteErrorCustomerName = '';
+    this.cdr.detectChanges();
   }
 
   closeDeleteSuccessModal(): void {
