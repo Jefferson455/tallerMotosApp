@@ -3,6 +3,8 @@ import { Customer } from '../../../core/interfaces/customer.interface';
 import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule } from '@angular/forms';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 
 type MotoForm = {
@@ -42,6 +44,15 @@ export class DashboardCustomers implements OnInit {
 
   showDeleteSuccessModal = false;
   deleteSuccessCustomerName = '';
+
+  showExportCustomersModal = false;
+  isExportingCustomers = false;
+
+  showExportSuccessModal = false;
+  exportSuccessMessage = '';
+
+  showExportErrorModal = false;
+  exportErrorMessage = '';
 
   newCustomerForm = {
     nombre: '',
@@ -269,6 +280,151 @@ export class DashboardCustomers implements OnInit {
   closeDeleteSuccessModal(): void {
     this.showDeleteSuccessModal = false;
     this.deleteSuccessCustomerName = '';
+  }
+
+  openExportCustomersModal(): void {
+    this.showExportCustomersModal = true;
+  }
+
+  closeExportCustomersModal(): void {
+    if (this.isExportingCustomers) return;
+    this.showExportCustomersModal = false;
+  }
+
+  closeExportSuccessModal(): void {
+    this.showExportSuccessModal = false;
+    this.exportSuccessMessage = '';
+  }
+
+  closeExportErrorModal(): void {
+    this.showExportErrorModal = false;
+    this.exportErrorMessage = '';
+  }
+
+  async confirmExportCustomers(): Promise<void> {
+    if (this.customers.length === 0) {
+      this.showExportCustomersModal = false;
+      this.exportErrorMessage = 'No hay clientes registrados para exportar.';
+      this.showExportErrorModal = true;
+      return;
+    }
+
+    try {
+      this.isExportingCustomers = true;
+
+      const workbook = new ExcelJS.Workbook();
+
+      workbook.creator = 'TallerMotosApp';
+      workbook.created = new Date();
+
+      const worksheet = workbook.addWorksheet('Clientes');
+
+      worksheet.columns = [
+        { header: 'ID', key: 'id', width: 10 },
+        { header: 'Nombre', key: 'nombre', width: 28 },
+        { header: 'Teléfono', key: 'telefono', width: 18 },
+        { header: 'Correo', key: 'correo', width: 30 },
+        { header: 'Documento', key: 'documento', width: 18 },
+        { header: 'Tipo documento', key: 'tipoDocumento', width: 26 },
+        { header: 'Motos registradas', key: 'cantidadMotos', width: 18 },
+        { header: 'Motos', key: 'motos', width: 45 },
+      ];
+
+      this.customers.forEach((customer) => {
+        const motosTexto = customer.motos && customer.motos.length > 0
+          ? customer.motos
+            .map((moto) => `${moto.marca} ${moto.modelo} - ${moto.placa}`)
+            .join(' | ')
+          : 'Sin motos';
+
+        worksheet.addRow({
+          id: customer.id,
+          nombre: customer.nombre,
+          telefono: customer.telefono,
+          correo: customer.correo || 'Sin correo',
+          documento: customer.documento || 'Sin documento',
+          tipoDocumento:
+            customer.tipoDocumentoNombre ||
+            customer.tipoDocumentoCodigo ||
+            'Sin tipo',
+          cantidadMotos: customer.cantidadMotos ?? customer.motos?.length ?? 0,
+          motos: motosTexto,
+        });
+      });
+
+      const headerRow = worksheet.getRow(1);
+
+      headerRow.eachCell((cell) => {
+        cell.font = {
+          bold: true,
+          color: { argb: 'FFFFFFFF' },
+        };
+
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF97316' },
+        };
+
+        cell.alignment = {
+          vertical: 'middle',
+          horizontal: 'center',
+        };
+      });
+
+      worksheet.eachRow((row) => {
+        row.eachCell((cell) => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+            left: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+            bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+            right: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          };
+
+          cell.alignment = {
+            vertical: 'middle',
+            wrapText: true,
+          };
+        });
+      });
+
+      worksheet.getRow(1).height = 24;
+
+      const buffer = await workbook.xlsx.writeBuffer();
+
+      const fileName = `clientes_tallermotos_${this.getTodayFileName()}.xlsx`;
+
+      saveAs(
+        new Blob([buffer], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        fileName
+      );
+
+      this.isExportingCustomers = false;
+      this.showExportCustomersModal = false;
+
+      this.exportSuccessMessage = `Se exportaron ${this.customers.length} clientes correctamente.`;
+      this.showExportSuccessModal = true;
+    } catch (error) {
+      console.error('Error exportando clientes:', error);
+
+      this.isExportingCustomers = false;
+      this.showExportCustomersModal = false;
+
+      this.exportErrorMessage = 'No se pudo generar el archivo Excel. Intenta nuevamente.';
+      this.showExportErrorModal = true;
+    }
+  }
+
+  private getTodayFileName(): string {
+    const date = new Date();
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
 }
