@@ -32,6 +32,17 @@ export class DashboardCustomers implements OnInit {
   showCustomerDetailModal = false;
   showEditCustomerModal = false;
 
+  customerToDelete: Customer | null = null;
+  showDeleteCustomerModal = false;
+  isDeletingCustomer = false;
+
+  showDeleteErrorModal = false;
+  deleteErrorMessage = '';
+  deleteErrorCustomerName = '';
+
+  showDeleteSuccessModal = false;
+  deleteSuccessCustomerName = '';
+
   newCustomerForm = {
     nombre: '',
     telefono: '',
@@ -60,14 +71,12 @@ export class DashboardCustomers implements OnInit {
 
     this.customerService.getCustomersBikes().subscribe({
       next: (data) => {
-        console.log('Clientes desde API:', data);
         this.customers = data;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error cargando clientes:', error);
-        this.errorMessage = 'No se pudieron cargar los clientes.';
+        this.errorMessage = 'No se pudieron cargar los clientes.', error;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -119,8 +128,6 @@ export class DashboardCustomers implements OnInit {
       tipoDocumento: Number(this.newCustomerForm.tipoDocumento),
       motos: motosValidas,
     };
-
-    console.log('Payload enviado:', payload);
 
     this.customerService.crearClienteConMotos(payload).subscribe({
       next: (response) => {
@@ -181,7 +188,6 @@ export class DashboardCustomers implements OnInit {
 
     this.customerService.updateCustomer(this.editCustomerForm.id, payload).subscribe({
       next: (response) => {
-        console.log('Cliente actualizado:', response);
         this.closeEditCustomerModal();
         this.loadCustomers();
       },
@@ -207,6 +213,62 @@ export class DashboardCustomers implements OnInit {
 
   editarCliente(customer: Customer): void {
     this.openEditCustomerModal(customer);
+  }
+
+  deleteCustomer(customer: Customer): void {
+    this.customerToDelete = customer;
+    this.showDeleteCustomerModal = true;
+  }
+
+  closeDeleteCustomerModal(): void {
+    if (this.isDeletingCustomer) return;
+
+    this.showDeleteCustomerModal = false;
+    this.customerToDelete = null;
+  }
+
+  confirmDeleteCustomer(): void {
+    if (!this.customerToDelete) return;
+
+    this.isDeletingCustomer = true;
+
+    this.customerService.deleteCustomer(this.customerToDelete.id).subscribe({
+      next: () => {
+        const deletedName = this.customerToDelete?.nombre ?? 'Cliente';
+
+        this.isDeletingCustomer = false;
+        this.closeDeleteCustomerModal();
+
+        this.deleteSuccessCustomerName = deletedName;
+        this.showDeleteSuccessModal = true;
+
+        this.loadCustomers();
+      },
+      error: (error) => {
+        console.error('Error eliminando cliente:', error);
+
+        this.isDeletingCustomer = false;
+        this.showDeleteCustomerModal = false;
+
+        this.deleteErrorCustomerName = this.customerToDelete?.nombre ?? 'Cliente';
+        this.deleteErrorMessage =
+          error?.error ||
+          'No se pudo eliminar el cliente. Intenta nuevamente más tarde.';
+
+        this.showDeleteErrorModal = true;
+      },
+    });
+  }
+
+  closeDeleteErrorModal(): void {
+    this.showDeleteErrorModal = false;
+    this.deleteErrorMessage = '';
+    this.deleteErrorCustomerName = '';
+  }
+
+  closeDeleteSuccessModal(): void {
+    this.showDeleteSuccessModal = false;
+    this.deleteSuccessCustomerName = '';
   }
 
 }

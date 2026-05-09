@@ -82,6 +82,9 @@
               <button type="button" class="btn-action btn-action--edit" (click)="editarCliente(customer)">
                 Editar
               </button>
+              <button type="button" class="btn-action btn-action--delete" (click)="deleteCustomer(customer)">
+                Eliminar
+              </button>
             </div>
           </td>
         </tr>
@@ -383,6 +386,95 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal de eliminar  -->
+@if (showDeleteCustomerModal && customerToDelete) {
+<div class="delete-modal-backdrop" (click)="closeDeleteCustomerModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon">
+      <i class="fa-solid fa-trash"></i>
+    </div>
+
+    <h3>¿Eliminar cliente?</h3>
+
+    <p>
+      Estás a punto de eliminar a
+      <strong>{{ customerToDelete.nombre }}</strong>.
+      Esta acción no se puede deshacer.
+    </p>
+
+    <div class="delete-modal__warning">
+      Si el cliente tiene motos asociadas, revisa que el backend permita eliminarlo correctamente.
+    </div>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-cancel" (click)="closeDeleteCustomerModal()"
+        [disabled]="isDeletingCustomer">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-delete-confirm" (click)="confirmDeleteCustomer()"
+        [disabled]="isDeletingCustomer">
+        {{ isDeletingCustomer ? 'Eliminando...' : 'Sí, eliminar' }}
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal de error al eliminar -->
+@if (showDeleteErrorModal) {
+<div class="delete-error-modal-backdrop" (click)="closeDeleteErrorModal()">
+  <div class="delete-error-modal" (click)="$event.stopPropagation()">
+    <div class="delete-error-modal__icon">
+      <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
+
+    <h3>No se pudo eliminar</h3>
+
+    <p>
+      El cliente
+      <strong>{{ deleteErrorCustomerName }}</strong>
+      no puede ser eliminado en este momento.
+    </p>
+
+    <div class="delete-error-modal__message">
+      {{ deleteErrorMessage }}
+    </div>
+
+    <div class="delete-error-modal__actions">
+      <button type="button" class="btn-error-close" (click)="closeDeleteErrorModal()">
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal de éxito al eliminar -->
+@if (showDeleteSuccessModal) {
+<div class="delete-success-modal-backdrop" (click)="closeDeleteSuccessModal()">
+  <div class="delete-success-modal" (click)="$event.stopPropagation()">
+    <div class="delete-success-modal__icon">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <h3>Cliente eliminado exitosamente</h3>
+
+    <p>
+      El cliente
+      <strong>{{ deleteSuccessCustomerName }}</strong>
+      fue eliminado correctamente del sistema.
+    </p>
+
+    <div class="delete-success-modal__actions">
+      <button type="button" class="btn-success-close" (click)="closeDeleteSuccessModal()">
+        Perfecto
+      </button>
     </div>
   </div>
 </div>

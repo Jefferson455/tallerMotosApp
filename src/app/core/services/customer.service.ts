@@ -67,4 +67,17 @@ export class CustomerService {
       responseType: 'text',
     });
   }
+
+  deleteCustomer(id: number): Observable<string> {
+  const token = localStorage.getItem('token') || '';
+
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+  });
+
+  return this.http.delete(`${this.apiUrl}/${id}`, {
+    headers,
+    responseType: 'text',
+  });
+}
 }
