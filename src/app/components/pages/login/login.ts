@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
 
   username = '';
   password = '';
@@ -27,23 +30,32 @@ export class Login {
     }
 
     this.loading = true;
+    this.cdr.detectChanges();
 
-    this.authService.login({
-      username: this.username,
-      password: this.password
-    }).subscribe({
-      next: (response) => {
-        console.log('Login exitoso:', response);
-        this.authService.saveSession(response);
-        this.loading = false;
-        this.router.navigate(['/dashboard']);
-      },
-      error: (error) => {
-        console.error('Error en login:', error);
-        this.loading = false;
-        this.errorMessage = 'Usuario o contraseña incorrectos.';
-      }
-    });
+    this.authService
+      .login({
+        username: this.username.trim(),
+        password: this.password.trim(),
+      })
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Login exitoso:', response);
+          this.authService.saveSession(response);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          console.error('Error en login:', error);
+          this.errorMessage = 'Usuario o contraseña incorrectos.';
+          this.cdr.detectChanges();
+        },
+      });
+
   }
 
 
