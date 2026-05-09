@@ -105,6 +105,8 @@
   }
 
 </section>
+
+<!--! Form de agregar nuevo cliente  -->
 @if (showNewCustomerModal) {
 <div class="customer-modal-backdrop" (click)="closeNewCustomerModal()">
   <div class="customer-modal customer-modal--large" (click)="$event.stopPropagation()">
@@ -126,24 +128,38 @@
           <div class="form-group">
             <label for="nombre">Nombre completo</label>
             <input id="nombre" type="text" placeholder="Ej. Jefferson Guzmán" [(ngModel)]="newCustomerForm.nombre"
-              name="nombre" />
+              name="nombre" [class.input-error]="formSubmitted && newCustomerErrors.nombre" />
+
+            @if (formSubmitted && newCustomerErrors.nombre) {
+            <small class="field-error">{{ newCustomerErrors.nombre }}</small>
+            }
           </div>
 
           <div class="form-group">
             <label for="telefono">Teléfono</label>
-            <input id="telefono" type="text" placeholder="Ej. 3001234567" [(ngModel)]="newCustomerForm.telefono"
-              name="telefono" />
+            <input id="telefono" type="text" inputmode="numeric" placeholder="Ej. 3001234567"
+              [(ngModel)]="newCustomerForm.telefono" name="telefono" (input)="onTelefonoInput()"
+              [class.input-error]="formSubmitted && newCustomerErrors.telefono" />
+
+            @if (formSubmitted && newCustomerErrors.telefono) {
+            <small class="field-error">{{ newCustomerErrors.telefono }}</small>
+            }
           </div>
 
           <div class="form-group">
             <label for="email">Correo electrónico</label>
             <input id="email" type="email" placeholder="Ej. correo@ejemplo.com" [(ngModel)]="newCustomerForm.email"
-              name="email" />
+              name="email" [class.input-error]="formSubmitted && newCustomerErrors.email" />
+
+            @if (formSubmitted && newCustomerErrors.email) {
+            <small class="field-error">{{ newCustomerErrors.email }}</small>
+            }
           </div>
 
           <div class="form-group">
             <label for="tipoDocumento">Tipo de documento</label>
-            <select id="tipoDocumento" [(ngModel)]="newCustomerForm.tipoDocumento" name="tipoDocumento">
+            <select id="tipoDocumento" [(ngModel)]="newCustomerForm.tipoDocumento" name="tipoDocumento"
+              [class.input-error]="formSubmitted && newCustomerErrors.tipoDocumento">
               <option [ngValue]="1">Registro Civil</option>
               <option [ngValue]="2">Tarjeta de Identidad</option>
               <option [ngValue]="3">Cédula de Ciudadanía</option>
@@ -156,15 +172,25 @@
               <option [ngValue]="10">Menor sin identificación</option>
               <option [ngValue]="11">Carné Diplomático</option>
             </select>
+
+            @if (formSubmitted && newCustomerErrors.tipoDocumento) {
+            <small class="field-error">{{ newCustomerErrors.tipoDocumento }}</small>
+            }
           </div>
 
           <div class="form-group">
             <label for="documento">Documento</label>
-            <input id="documento" type="text" placeholder="Ej. 123456789" [(ngModel)]="newCustomerForm.documento"
-              name="documento" />
+            <input id="documento" type="text" inputmode="numeric" placeholder="Ej. 123456789"
+              [(ngModel)]="newCustomerForm.documento" name="documento" (input)="onDocumentoInput()"
+              [class.input-error]="formSubmitted && newCustomerErrors.documento" />
+
+            @if (formSubmitted && newCustomerErrors.documento) {
+            <small class="field-error">{{ newCustomerErrors.documento }}</small>
+            }
           </div>
         </div>
 
+        <!--! Formulario de moto -->
         <div class="moto-list">
           @for (moto of motos; track $index; let i = $index) {
           <div class="moto-section">
@@ -199,25 +225,44 @@
                   <div class="form-group">
                     <label [for]="'placa_' + i">Placa</label>
                     <input [id]="'placa_' + i" type="text" placeholder="Ej. ABC12D" [(ngModel)]="moto.placa"
-                      [name]="'placa_' + i" />
+                      [name]="'placa_' + i" maxlength="6" (input)="onMotoPlacaInput(i)"
+                      [class.input-error]="formSubmitted && motoErrors[i]?.placa" />
+
+                    @if (formSubmitted && motoErrors[i]?.placa) {
+                    <small class="field-error">{{ motoErrors[i].placa }}</small>
+                    }
                   </div>
 
                   <div class="form-group">
                     <label [for]="'marca_' + i">Marca</label>
                     <input [id]="'marca_' + i" type="text" placeholder="Ej. Yamaha" [(ngModel)]="moto.marca"
-                      [name]="'marca_' + i" />
+                      [name]="'marca_' + i" (input)="onMotoMarcaInput(i)"
+                      [class.input-error]="formSubmitted && motoErrors[i]?.marca" />
+
+                    @if (formSubmitted && motoErrors[i]?.marca) {
+                    <small class="field-error">{{ motoErrors[i].marca }}</small>
+                    }
                   </div>
 
                   <div class="form-group">
                     <label [for]="'modelo_' + i">Modelo</label>
                     <input [id]="'modelo_' + i" type="text" placeholder="Ej. MT-15" [(ngModel)]="moto.modelo"
-                      [name]="'modelo_' + i" />
+                      [name]="'modelo_' + i" [class.input-error]="formSubmitted && motoErrors[i]?.modelo" />
+
+                    @if (formSubmitted && motoErrors[i]?.modelo) {
+                    <small class="field-error">{{ motoErrors[i].modelo }}</small>
+                    }
                   </div>
 
                   <div class="form-group">
                     <label [for]="'anio_' + i">Año</label>
-                    <input [id]="'anio_' + i" type="text" placeholder="Ej. 2024" [(ngModel)]="moto.anio"
-                      [name]="'anio_' + i" />
+                    <input [id]="'anio_' + i" type="text" inputmode="numeric" maxlength="4" placeholder="Ej. 2024"
+                      [(ngModel)]="moto.anio" [name]="'anio_' + i" (input)="onMotoAnioInput(i)"
+                      [class.input-error]="formSubmitted && motoErrors[i]?.anio" />
+
+                    @if (formSubmitted && motoErrors[i]?.anio) {
+                    <small class="field-error">{{ motoErrors[i].anio }}</small>
+                    }
                   </div>
                 </div>
               </div>

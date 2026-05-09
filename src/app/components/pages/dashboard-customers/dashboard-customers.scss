@@ -1121,6 +1121,26 @@
   }
 }
 
+.field-error {
+  display: block;
+  margin-top: 0.2rem;
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.customer-modal {
+  .form-group {
+    input.input-error,
+    select.input-error {
+      border-color: #ef4444;
+      background: #fff7f7;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .detail-grid {
     grid-template-columns: 1fr;

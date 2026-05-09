@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-
 type MotoForm = {
   placa: string;
   marca: string;
@@ -55,6 +54,8 @@ export class DashboardCustomers implements OnInit {
   showExportErrorModal = false;
   exportErrorMessage = '';
 
+  formSubmitted = false;
+
   newCustomerForm = {
     nombre: '',
     telefono: '',
@@ -70,6 +71,21 @@ export class DashboardCustomers implements OnInit {
     correo: '',
     documento: '',
   };
+
+  newCustomerErrors = {
+    nombre: '',
+    telefono: '',
+    email: '',
+    tipoDocumento: '',
+    documento: '',
+  };
+
+  motoErrors: {
+    placa: string;
+    marca: string;
+    modelo: string;
+    anio: string;
+  }[] = [];
 
   motos: MotoForm[] = [];
 
@@ -107,6 +123,7 @@ export class DashboardCustomers implements OnInit {
 
   openNewCustomerModal(): void {
     this.showNewCustomerModal = true;
+    this.formSubmitted = false;
 
     this.newCustomerForm = {
       nombre: '',
@@ -117,6 +134,7 @@ export class DashboardCustomers implements OnInit {
     };
 
     this.motos = [this.crearMotoVacia()];
+    this.resetValidationErrors();
   }
 
   closeNewCustomerModal(): void {
@@ -124,13 +142,18 @@ export class DashboardCustomers implements OnInit {
   }
 
   saveNewCustomer(): void {
-    const motosValidas = this.motos
-      .filter((moto) => moto.placa.trim() || moto.marca.trim() || moto.modelo.trim())
-      .map((moto) => ({
-        marca: moto.marca.trim(),
-        modelo: moto.modelo.trim(),
-        placa: moto.placa.trim(),
-      }));
+    this.formSubmitted = true;
+
+    if (!this.validateNewCustomerForm()) {
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const motosValidas = this.motos.map((moto) => ({
+      marca: this.capitalizeFirst(moto.marca.trim()),
+      modelo: moto.modelo.trim(),
+      placa: this.normalizePlate(moto.placa.trim()),
+    }));
 
     const payload = {
       nombre: this.newCustomerForm.nombre.trim(),
@@ -140,6 +163,8 @@ export class DashboardCustomers implements OnInit {
       tipoDocumento: Number(this.newCustomerForm.tipoDocumento),
       motos: motosValidas,
     };
+
+    console.log('Payload enviado:', payload);
 
     this.customerService.crearClienteConMotos(payload).subscribe({
       next: (response) => {
@@ -171,6 +196,13 @@ export class DashboardCustomers implements OnInit {
       modelo: '',
       anio: '',
       abierta: true,
+    });
+
+    this.motoErrors.push({
+      placa: '',
+      marca: '',
+      modelo: '',
+      anio: '',
     });
   }
 
@@ -211,6 +243,7 @@ export class DashboardCustomers implements OnInit {
 
   eliminarMoto(index: number): void {
     this.motos.splice(index, 1);
+    this.motoErrors.splice(index, 1);
   }
 
   verDetalle(customer: Customer): void {
@@ -315,23 +348,172 @@ export class DashboardCustomers implements OnInit {
     this.showExportErrorModal = false;
     this.exportErrorMessage = '';
   }
+  private resetValidationErrors(): void {
+    this.newCustomerErrors = {
+      nombre: '',
+      telefono: '',
+      email: '',
+      tipoDocumento: '',
+      documento: '',
+    };
 
-  async confirmExportCustomers(): Promise<void> {
-    if (this.customers.length === 0) {
-      this.showExportCustomersModal = false;
-      this.exportErrorMessage = 'No hay clientes registrados para exportar.';
-      this.showExportErrorModal = true;
-      return;
+    this.motoErrors = this.motos.map(() => ({
+      placa: '',
+      marca: '',
+      modelo: '',
+      anio: '',
+    }));
+  }
+
+  onlyNumbers(value: string): string {
+    return value.replace(/\D/g, '');
+  }
+
+  capitalizeFirst(value: string): string {
+    const cleanValue = value.trimStart();
+
+    if (!cleanValue) return '';
+
+    return cleanValue.charAt(0).toUpperCase() + cleanValue.slice(1);
+  }
+
+  normalizePlate(value: string): string {
+    return value
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 6);
+  }
+
+  onTelefonoInput(): void {
+    this.newCustomerForm.telefono = this.onlyNumbers(this.newCustomerForm.telefono);
+  }
+
+  onDocumentoInput(): void {
+    this.newCustomerForm.documento = this.onlyNumbers(this.newCustomerForm.documento);
+  }
+
+  onMotoPlacaInput(index: number): void {
+    this.motos[index].placa = this.normalizePlate(this.motos[index].placa);
+  }
+
+  onMotoMarcaInput(index: number): void {
+    this.motos[index].marca = this.capitalizeFirst(this.motos[index].marca);
+  }
+
+  onMotoAnioInput(index: number): void {
+    this.motos[index].anio = this.onlyNumbers(this.motos[index].anio).slice(0, 4);
+  }
+
+  private validateNewCustomerForm(): boolean {
+    this.resetValidationErrors();
+
+    let isValid = true;
+
+    const nombre = this.newCustomerForm.nombre.trim();
+    const telefono = this.newCustomerForm.telefono.trim();
+    const email = this.newCustomerForm.email.trim();
+    const documento = this.newCustomerForm.documento.trim();
+    const tipoDocumento = Number(this.newCustomerForm.tipoDocumento);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const placaRegex = /^([A-Z]{3}\d{2}[A-Z]|[A-Z]{3}\d{3})$/;
+
+    const currentYear = new Date().getFullYear();
+
+    if (!nombre) {
+      this.newCustomerErrors.nombre = 'El nombre completo es obligatorio.';
+      isValid = false;
+    } else if (nombre.split(/\s+/).length < 2) {
+      this.newCustomerErrors.nombre = 'Ingresa mínimo nombre y apellido.';
+      isValid = false;
     }
 
+    if (!telefono) {
+      this.newCustomerErrors.telefono = 'El teléfono es obligatorio.';
+      isValid = false;
+    } else if (!/^\d+$/.test(telefono)) {
+      this.newCustomerErrors.telefono = 'El teléfono solo debe contener números.';
+      isValid = false;
+    }
+
+    if (!email) {
+      this.newCustomerErrors.email = 'El correo electrónico es obligatorio.';
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      this.newCustomerErrors.email = 'Ingresa un correo electrónico válido.';
+      isValid = false;
+    }
+
+    if (!tipoDocumento || tipoDocumento <= 0) {
+      this.newCustomerErrors.tipoDocumento = 'Selecciona un tipo de documento.';
+      isValid = false;
+    }
+
+    if (!documento) {
+      this.newCustomerErrors.documento = 'El documento es obligatorio.';
+      isValid = false;
+    } else if (!/^\d+$/.test(documento)) {
+      this.newCustomerErrors.documento = 'El documento solo debe contener números.';
+      isValid = false;
+    } else if (documento.length < 5) {
+      this.newCustomerErrors.documento = 'El documento debe tener mínimo 5 caracteres.';
+      isValid = false;
+    }
+
+    this.motos.forEach((moto, index) => {
+      const placa = moto.placa.trim().toUpperCase();
+      const marca = moto.marca.trim();
+      const modelo = moto.modelo.trim();
+      const anio = moto.anio.trim();
+
+      if (!placa) {
+        this.motoErrors[index].placa = 'La placa es obligatoria.';
+        isValid = false;
+      } else if (!placaRegex.test(placa)) {
+        this.motoErrors[index].placa = 'Formato inválido. Ej: ABC12D o ABC123.';
+        isValid = false;
+      }
+
+      if (!marca) {
+        this.motoErrors[index].marca = 'La marca es obligatoria.';
+        isValid = false;
+      }
+
+      if (!modelo) {
+        this.motoErrors[index].modelo = 'El modelo es obligatorio.';
+        isValid = false;
+      }
+
+      if (!anio) {
+        this.motoErrors[index].anio = 'El año es obligatorio.';
+        isValid = false;
+      } else if (!/^\d{4}$/.test(anio)) {
+        this.motoErrors[index].anio = 'El año debe tener 4 números.';
+        isValid = false;
+      } else {
+        const year = Number(anio);
+
+        if (year < 1950 || year > currentYear + 1) {
+          this.motoErrors[index].anio = `Ingresa un año entre 1950 y ${currentYear + 1}.`;
+          isValid = false;
+        }
+      }
+    });
+
+    return isValid;
+  }
+
+  async confirmExportCustomers(): Promise<void> {
+    if (this.isExportingCustomers) return;
+
+    this.isExportingCustomers = true;
+    this.cdr.detectChanges();
+
+    await this.waitForUi();
+
     try {
-      this.isExportingCustomers = true;
-
       const workbook = new ExcelJS.Workbook();
-
-      workbook.creator = 'TallerMotosApp';
-      workbook.created = new Date();
-
       const worksheet = workbook.addWorksheet('Clientes');
 
       worksheet.columns = [
@@ -346,11 +528,12 @@ export class DashboardCustomers implements OnInit {
       ];
 
       this.customers.forEach((customer) => {
-        const motosTexto = customer.motos && customer.motos.length > 0
-          ? customer.motos
-            .map((moto) => `${moto.marca} ${moto.modelo} - ${moto.placa}`)
-            .join(' | ')
-          : 'Sin motos';
+        const motosTexto =
+          customer.motos && customer.motos.length > 0
+            ? customer.motos
+              .map((moto) => `${moto.marca} ${moto.modelo} - ${moto.placa}`)
+              .join(' | ')
+            : 'Sin motos';
 
         worksheet.addRow({
           id: customer.id,
@@ -416,22 +599,34 @@ export class DashboardCustomers implements OnInit {
         fileName
       );
 
-      this.isExportingCustomers = false;
-      this.showExportCustomersModal = false;
+      // Espera visual bonita
+      await this.delay(1200);
 
+      this.showExportCustomersModal = false;
       this.exportSuccessMessage = `Se exportaron ${this.customers.length} clientes correctamente.`;
       this.showExportSuccessModal = true;
     } catch (error) {
       console.error('Error exportando clientes:', error);
 
-      this.isExportingCustomers = false;
-      this.showExportCustomersModal = false;
+      await this.delay(800);
 
-      this.exportErrorMessage = 'No se pudo generar el archivo Excel. Intenta nuevamente.';
+      this.showExportCustomersModal = false;
+      this.exportErrorMessage =
+        'No se pudo generar el archivo Excel. Intenta nuevamente.';
       this.showExportErrorModal = true;
+    } finally {
+      this.isExportingCustomers = false;
+      this.cdr.detectChanges();
     }
   }
 
+  private waitForUi(): Promise<void> {
+    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
   private getTodayFileName(): string {
     const date = new Date();
 
