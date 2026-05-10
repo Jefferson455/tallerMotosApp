@@ -1,0 +1,71 @@
+@if (show) {
+<div class="export-modal-backdrop" (click)="onClose()">
+  <div class="export-modal" (click)="$event.stopPropagation()">
+
+    @if (isConfirm || isLoading) {
+    <div class="export-modal__icon export-modal__icon--info">
+      <i class="fa-solid fa-file-excel"></i>
+    </div>
+
+    <h3>{{ title }}</h3>
+
+    <p>
+      Se generará un archivo Excel con
+      <strong>{{ itemCount }}</strong>
+      {{ itemName }} registrados.
+    </p>
+
+    <div class="export-modal__warning">
+      {{ warningMessage }}
+    </div>
+
+    <div class="export-modal__actions">
+      <button type="button" class="btn-export-cancel" (click)="onClose()" [disabled]="isLoading">
+        {{ cancelButtonText }}
+      </button>
+
+      <button type="button" class="btn-export-confirm" (click)="onConfirm()" [disabled]="isLoading">
+        {{ isLoading ? loadingButtonText : confirmButtonText }}
+      </button>
+    </div>
+    }
+
+    @if (isSuccess) {
+    <div class="export-modal__icon export-modal__icon--success">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <h3>{{ successTitle }}</h3>
+
+    <p>
+      {{ successMessage }}
+    </p>
+
+    <div class="export-modal__actions">
+      <button type="button" class="btn-export-success-close" (click)="onClose()">
+        {{ successButtonText }}
+      </button>
+    </div>
+    }
+
+    @if (isError) {
+    <div class="export-modal__icon export-modal__icon--error">
+      <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
+
+    <h3>{{ errorTitle }}</h3>
+
+    <p>
+      {{ errorMessage }}
+    </p>
+
+    <div class="export-modal__actions">
+      <button type="button" class="btn-export-error-close" (click)="onClose()">
+        {{ errorButtonText }}
+      </button>
+    </div>
+    }
+
+  </div>
+</div>
+}

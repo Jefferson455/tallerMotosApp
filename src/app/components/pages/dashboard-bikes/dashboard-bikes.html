@@ -1,3 +1,10 @@
+<app-exportdataexcel [show]="showExportBikesModal" [status]="exportBikesStatus" [itemCount]="bikes.length"
+  itemName="motos" title="¿Exportar motos?" successTitle="Excel generado correctamente" errorTitle="No se pudo exportar"
+  warningMessage="El archivo incluirá la información básica de las motos y su cliente asociado."
+  [successMessage]="exportSuccessMessage" [errorMessage]="exportErrorMessage" confirmButtonText="Sí, exportar"
+  loadingButtonText="Exportando..." cancelButtonText="Cancelar" successButtonText="Perfecto" errorButtonText="Entendido"
+  (closeModal)="closeExportBikesModal()" (confirmExport)="confirmExportBikes()">
+</app-exportdataexcel>
 <section class="bikes-header">
   <div>
     <p class="bikes-header__eyebrow">Motos</p>
@@ -6,8 +13,12 @@
   </div>
 
   <div class="bikes-header__actions">
-    <button class="btn-light" type="button">Exportar</button>
-    <button class="btn-main" type="button">Nueva moto</button>
+    <button class="btn-light" type="button" (click)="openExportBikesModal()">
+      Exportar
+    </button>
+    <button class="btn-main" type="button" (click)="openNewBikeModal()">
+      Nueva moto
+    </button>
   </div>
 </section>
 
@@ -19,7 +30,7 @@
 
   <article class="mini-stat">
     <span>Clientes asociados</span>
-    <h3>{{ asocciatedCustomers }}</h3>
+    <h3>{{ associatedCustomers }}</h3>
   </article>
 </section>
 
@@ -94,3 +105,107 @@
   </div>
   }
 </section>
+
+<!--! Modal for insert the new Bike  -->
+@if (showNewBikeModal) {
+<div class="customer-modal-backdrop" (click)="closeNewBikeModal()">
+  <div class="customer-modal customer-modal--large" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Nueva moto</p>
+        <h3>Registrar moto</h3>
+        <span>Asocia una motocicleta a un cliente registrado.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeNewBikeModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <form class="customer-form">
+        <div class="customer-form__grid">
+          <div class="form-group">
+            <label for="bikePlaca">Placa</label>
+            <input id="bikePlaca" type="text" placeholder="Ej. ABC12D" maxlength="6" [(ngModel)]="newBikeForm.placa"
+              name="bikePlaca" (input)="onBikePlacaInput()"
+              [class.input-error]="newBikeFormSubmitted && newBikeErrors.placa" />
+
+            @if (newBikeFormSubmitted && newBikeErrors.placa) {
+            <small class="field-error">{{ newBikeErrors.placa }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="bikeMarca">Marca</label>
+            <input id="bikeMarca" type="text" placeholder="Ej. Yamaha" [(ngModel)]="newBikeForm.marca" name="bikeMarca"
+              (input)="onBikeMarcaInput()" [class.input-error]="newBikeFormSubmitted && newBikeErrors.marca" />
+
+            @if (newBikeFormSubmitted && newBikeErrors.marca) {
+            <small class="field-error">{{ newBikeErrors.marca }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="bikeModelo">Modelo</label>
+            <input id="bikeModelo" type="text" placeholder="Ej. MT-15" [(ngModel)]="newBikeForm.modelo"
+              name="bikeModelo" [class.input-error]="newBikeFormSubmitted && newBikeErrors.modelo" />
+
+            @if (newBikeFormSubmitted && newBikeErrors.modelo) {
+            <small class="field-error">{{ newBikeErrors.modelo }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="bikeCliente">Cliente</label>
+            <select id="bikeCliente" [(ngModel)]="newBikeForm.clienteId" name="bikeCliente"
+              [class.input-error]="newBikeFormSubmitted && newBikeErrors.clienteId">
+              <option [ngValue]="null">Selecciona un cliente</option>
+
+              @for (customer of customers; track customer.id) {
+              <option [ngValue]="customer.id">
+                {{ customer.nombre }} - {{ customer.telefono }}
+              </option>
+              }
+            </select>
+
+            @if (newBikeFormSubmitted && newBikeErrors.clienteId) {
+            <small class="field-error">{{ newBikeErrors.clienteId }}</small>
+            }
+          </div>
+        </div>
+
+        <div class="bike-form-preview">
+          <div class="bike-form-preview__icon">
+            <i class="fa-solid fa-motorcycle"></i>
+          </div>
+
+          <div>
+            <strong>{{ newBikeForm.marca || 'Marca de la moto' }}</strong>
+            <span>
+              {{ newBikeForm.modelo || 'Modelo' }} ·
+              {{ newBikeForm.placa || 'Placa' }}
+            </span>
+          </div>
+        </div>
+
+        @if (newBikeErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ newBikeErrorMessage }}
+        </div>
+        }
+
+        <div class="customer-modal__actions">
+          <button type="button" class="btn-cancel" (click)="closeNewBikeModal()" [disabled]="isSavingBike">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-save" (click)="saveNewBike()" [disabled]="isSavingBike">
+            {{ isSavingBike ? 'Guardando...' : 'Guardar moto' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+}
