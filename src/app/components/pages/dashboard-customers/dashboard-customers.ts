@@ -107,10 +107,14 @@ export class DashboardCustomers implements OnInit {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        this.errorMessage = this.getRequestErrorMessage(
-          error,
-          'No se pudieron cargar los clientes.'
-        );
+        console.error('Error cargando clientes:', error);
+
+        if (error.status === 401) {
+          this.errorMessage = 'Tu sesión expiró o no tienes autorización. Inicia sesión nuevamente.';
+        } else {
+          this.errorMessage = 'No se pudieron cargar los clientes.';
+        }
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },

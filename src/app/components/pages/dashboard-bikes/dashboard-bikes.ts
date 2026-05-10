@@ -112,7 +112,13 @@ export class DashboardBikes implements OnInit {
       },
       error: (error) => {
         console.error('Error cargando motos:', error);
-        this.errorMessage = 'No se pudieron cargar las motos.';
+
+        if (error.status === 401) {
+          this.errorMessage = 'Tu sesión expiró o no tienes autorización. Inicia sesión nuevamente.';
+        } else {
+          this.errorMessage = 'No se pudieron cargar las motos.';
+        }
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
