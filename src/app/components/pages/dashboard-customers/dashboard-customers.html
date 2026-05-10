@@ -1,3 +1,12 @@
+<app-exportdataexcel [show]="showExportCustomersModal" [status]="exportCustomersStatus" [itemCount]="customers.length"
+  itemName="clientes" title="¿Exportar clientes?" successTitle="Excel generado correctamente"
+  errorTitle="No se pudo exportar"
+  warningMessage="El archivo incluirá información básica del cliente y sus motos asociadas."
+  [successMessage]="exportSuccessMessage" [errorMessage]="exportErrorMessage" confirmButtonText="Sí, exportar"
+  loadingButtonText="Exportando..." cancelButtonText="Cancelar" successButtonText="Perfecto" errorButtonText="Entendido"
+  (closeModal)="closeExportCustomersModal()" (confirmExport)="confirmExportCustomers()">
+</app-exportdataexcel>
+
 <section class="customers-header">
   <div>
     <p class="customers-header__eyebrow">Clientes</p>
@@ -275,6 +284,12 @@
           </button>
         </div>
 
+        @if (newCustomerErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ newCustomerErrorMessage }}
+        </div>
+        }
+
         <div class="customer-modal__actions">
           <button type="button" class="btn-cancel" (click)="closeNewCustomerModal()">
             Cancelar
@@ -423,6 +438,12 @@
           </div>
         </div>
 
+        @if (editCustomerErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ editCustomerErrorMessage }}
+        </div>
+        }
+
         <div class="customer-modal__actions">
           <button type="button" class="btn-cancel" (click)="closeEditCustomerModal()">
             Cancelar
@@ -521,87 +542,6 @@
     <div class="delete-success-modal__actions">
       <button type="button" class="btn-success-close" (click)="closeDeleteSuccessModal()">
         Perfecto
-      </button>
-    </div>
-  </div>
-</div>
-}
-
-<!--! Modal de confirmación para exportar -->
-@if (showExportCustomersModal) {
-<div class="export-modal-backdrop" (click)="closeExportCustomersModal()">
-  <div class="export-modal" (click)="$event.stopPropagation()">
-    <div class="export-modal__icon">
-      <i class="fa-solid fa-file-excel"></i>
-    </div>
-
-    <h3>¿Exportar clientes?</h3>
-
-    <p>
-      Se generará un archivo Excel con
-      <strong>{{ customers.length }}</strong>
-      clientes registrados.
-    </p>
-
-    <div class="export-modal__warning">
-      El archivo incluirá información básica del cliente y sus motos asociadas.
-    </div>
-
-    <div class="export-modal__actions">
-      <button type="button" class="btn-export-cancel" (click)="closeExportCustomersModal()"
-        [disabled]="isExportingCustomers">
-        Cancelar
-      </button>
-
-      <button type="button" class="btn-export-confirm" (click)="confirmExportCustomers()"
-        [disabled]="isExportingCustomers">
-        {{ isExportingCustomers ? 'Exportando...' : 'Sí, exportar' }}
-      </button>
-    </div>
-  </div>
-</div>
-}
-
-<!--! Modal de éxito al exportar -->
-@if (showExportSuccessModal) {
-<div class="export-success-modal-backdrop" (click)="closeExportSuccessModal()">
-  <div class="export-success-modal" (click)="$event.stopPropagation()">
-    <div class="export-success-modal__icon">
-      <i class="fa-solid fa-check"></i>
-    </div>
-
-    <h3>Excel generado correctamente</h3>
-
-    <p>
-      {{ exportSuccessMessage }}
-    </p>
-
-    <div class="export-success-modal__actions">
-      <button type="button" class="btn-export-success-close" (click)="closeExportSuccessModal()">
-        Perfecto
-      </button>
-    </div>
-  </div>
-</div>
-}
-
-<!--! Modal de error al exportar -->
-@if (showExportErrorModal) {
-<div class="export-error-modal-backdrop" (click)="closeExportErrorModal()">
-  <div class="export-error-modal" (click)="$event.stopPropagation()">
-    <div class="export-error-modal__icon">
-      <i class="fa-solid fa-circle-exclamation"></i>
-    </div>
-
-    <h3>No se pudo exportar</h3>
-
-    <p>
-      {{ exportErrorMessage }}
-    </p>
-
-    <div class="export-error-modal__actions">
-      <button type="button" class="btn-export-error-close" (click)="closeExportErrorModal()">
-        Entendido
       </button>
     </div>
   </div>

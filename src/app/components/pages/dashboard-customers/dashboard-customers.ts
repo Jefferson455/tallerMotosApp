@@ -5,6 +5,8 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { Exportdataexcel, ExportModalStatus } from '../../shared/exportdataexcel/exportdataexcel';
+
 
 type MotoForm = {
   placa: string;
@@ -16,7 +18,7 @@ type MotoForm = {
 
 @Component({
   selector: 'app-dashboard-customers',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Exportdataexcel],
   templateUrl: './dashboard-customers.html',
   styleUrl: './dashboard-customers.scss',
 })
@@ -46,15 +48,16 @@ export class DashboardCustomers implements OnInit {
   deleteSuccessCustomerName = '';
 
   showExportCustomersModal = false;
-  isExportingCustomers = false;
 
-  showExportSuccessModal = false;
   exportSuccessMessage = '';
 
-  showExportErrorModal = false;
   exportErrorMessage = '';
 
+  exportCustomersStatus: ExportModalStatus = 'confirm';
+
   formSubmitted = false;
+  newCustomerErrorMessage = '';
+  editCustomerErrorMessage = '';
 
   newCustomerForm = {
     nombre: '',
@@ -104,7 +107,10 @@ export class DashboardCustomers implements OnInit {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        this.errorMessage = 'No se pudieron cargar los clientes.', error;
+        this.errorMessage = this.getRequestErrorMessage(
+          error,
+          'No se pudieron cargar los clientes.'
+        );
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -124,6 +130,7 @@ export class DashboardCustomers implements OnInit {
   openNewCustomerModal(): void {
     this.showNewCustomerModal = true;
     this.formSubmitted = false;
+    this.newCustomerErrorMessage = '';
 
     this.newCustomerForm = {
       nombre: '',
@@ -164,16 +171,17 @@ export class DashboardCustomers implements OnInit {
       motos: motosValidas,
     };
 
-    console.log('Payload enviado:', payload);
-
     this.customerService.crearClienteConMotos(payload).subscribe({
-      next: (response) => {
-        console.log('Cliente creado:', response);
+      next: () => {
         this.closeNewCustomerModal();
         this.loadCustomers();
       },
       error: (error) => {
-        console.log('Error creando cliente:', error);
+        this.newCustomerErrorMessage = this.getRequestErrorMessage(
+          error,
+          'No se pudo crear el cliente. Intenta nuevamente.'
+        );
+        this.cdr.detectChanges();
       },
     });
   }
@@ -207,6 +215,8 @@ export class DashboardCustomers implements OnInit {
   }
 
   openEditCustomerModal(customer: Customer): void {
+    this.editCustomerErrorMessage = '';
+
     this.editCustomerForm = {
       id: customer.id,
       nombre: customer.nombre || '',
@@ -220,6 +230,7 @@ export class DashboardCustomers implements OnInit {
 
   closeEditCustomerModal(): void {
     this.showEditCustomerModal = false;
+    this.editCustomerErrorMessage = '';
   }
 
   updateCustomer(): void {
@@ -231,12 +242,16 @@ export class DashboardCustomers implements OnInit {
     };
 
     this.customerService.updateCustomer(this.editCustomerForm.id, payload).subscribe({
-      next: (response) => {
+      next: () => {
         this.closeEditCustomerModal();
         this.loadCustomers();
       },
       error: (error) => {
-        console.error('Error actualizando cliente:', error);
+        this.editCustomerErrorMessage = this.getRequestErrorMessage(
+          error,
+          'No se pudo actualizar el cliente. Intenta nuevamente.'
+        );
+        this.cdr.detectChanges();
       },
     });
   }
@@ -296,8 +311,6 @@ export class DashboardCustomers implements OnInit {
       },
 
       error: (error) => {
-        console.error('Error eliminando cliente:', error);
-
         const customerName = this.customerToDelete?.nombre ?? 'Cliente';
 
         this.isDeletingCustomer = false;
@@ -305,11 +318,10 @@ export class DashboardCustomers implements OnInit {
         this.customerToDelete = null;
 
         this.deleteErrorCustomerName = customerName;
-        this.deleteErrorMessage =
-          typeof error?.error === 'string'
-            ? error.error
-            : error?.error?.message ||
-            'No se pudo eliminar el cliente. Intenta nuevamente más tarde.';
+        this.deleteErrorMessage = this.getRequestErrorMessage(
+          error,
+          'No se pudo eliminar el cliente. Intenta nuevamente más tarde.'
+        );
 
         this.showDeleteErrorModal = true;
 
@@ -331,23 +343,21 @@ export class DashboardCustomers implements OnInit {
   }
 
   openExportCustomersModal(): void {
+    this.exportCustomersStatus = 'confirm';
+    this.exportSuccessMessage = '';
+    this.exportErrorMessage = '';
     this.showExportCustomersModal = true;
+    this.cdr.detectChanges();
   }
 
   closeExportCustomersModal(): void {
-    if (this.isExportingCustomers) return;
     this.showExportCustomersModal = false;
-  }
-
-  closeExportSuccessModal(): void {
-    this.showExportSuccessModal = false;
+    this.exportCustomersStatus = 'confirm';
     this.exportSuccessMessage = '';
+    this.exportErrorMessage = '';
+    this.cdr.detectChanges();
   }
 
-  closeExportErrorModal(): void {
-    this.showExportErrorModal = false;
-    this.exportErrorMessage = '';
-  }
   private resetValidationErrors(): void {
     this.newCustomerErrors = {
       nombre: '',
@@ -505,14 +515,21 @@ export class DashboardCustomers implements OnInit {
   }
 
   async confirmExportCustomers(): Promise<void> {
-    if (this.isExportingCustomers) return;
+    if (this.exportCustomersStatus === 'loading') return;
 
-    this.isExportingCustomers = true;
+    this.exportCustomersStatus = 'loading';
     this.cdr.detectChanges();
 
     await this.waitForUi();
 
     try {
+      if (!this.customers.length) {
+        this.exportErrorMessage = 'No hay clientes registrados para exportar.';
+        this.exportCustomersStatus = 'error';
+        this.cdr.detectChanges();
+        return;
+      }
+
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Clientes');
 
@@ -521,19 +538,18 @@ export class DashboardCustomers implements OnInit {
         { header: 'Nombre', key: 'nombre', width: 28 },
         { header: 'Teléfono', key: 'telefono', width: 18 },
         { header: 'Correo', key: 'correo', width: 30 },
-        { header: 'Documento', key: 'documento', width: 18 },
-        { header: 'Tipo documento', key: 'tipoDocumento', width: 26 },
-        { header: 'Motos registradas', key: 'cantidadMotos', width: 18 },
+        { header: 'Documento', key: 'documento', width: 20 },
+        { header: 'Tipo documento', key: 'tipoDocumento', width: 24 },
+        { header: 'Cantidad motos', key: 'cantidadMotos', width: 18 },
         { header: 'Motos', key: 'motos', width: 45 },
       ];
 
       this.customers.forEach((customer) => {
-        const motosTexto =
-          customer.motos && customer.motos.length > 0
-            ? customer.motos
-              .map((moto) => `${moto.marca} ${moto.modelo} - ${moto.placa}`)
-              .join(' | ')
-            : 'Sin motos';
+        const motosTexto = customer.motos?.length
+          ? customer.motos
+            .map((moto) => `${moto.marca} ${moto.modelo} - ${moto.placa}`)
+            .join(' | ')
+          : 'Sin motos';
 
         worksheet.addRow({
           id: customer.id,
@@ -544,41 +560,37 @@ export class DashboardCustomers implements OnInit {
           tipoDocumento:
             customer.tipoDocumentoNombre ||
             customer.tipoDocumentoCodigo ||
+            customer.tipoDocumento ||
             'Sin tipo',
           cantidadMotos: customer.cantidadMotos ?? customer.motos?.length ?? 0,
           motos: motosTexto,
         });
       });
 
-      const headerRow = worksheet.getRow(1);
+      worksheet.getRow(1).font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' },
+      };
 
-      headerRow.eachCell((cell) => {
-        cell.font = {
-          bold: true,
-          color: { argb: 'FFFFFFFF' },
-        };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFFF5A1F' },
+      };
 
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFF97316' },
-        };
-
-        cell.alignment = {
-          vertical: 'middle',
-          horizontal: 'center',
-        };
-      });
+      worksheet.getRow(1).alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+      };
 
       worksheet.eachRow((row) => {
         row.eachCell((cell) => {
           cell.border = {
-            top: { style: 'thin', color: { argb: 'FFE5E7EB' } },
-            left: { style: 'thin', color: { argb: 'FFE5E7EB' } },
-            bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } },
-            right: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
           };
-
           cell.alignment = {
             vertical: 'middle',
             wrapText: true,
@@ -586,36 +598,25 @@ export class DashboardCustomers implements OnInit {
         });
       });
 
-      worksheet.getRow(1).height = 24;
-
       const buffer = await workbook.xlsx.writeBuffer();
 
-      const fileName = `clientes_tallermotos_${this.getTodayFileName()}.xlsx`;
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
 
-      saveAs(
-        new Blob([buffer], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        }),
-        fileName
-      );
+      const today = new Date().toISOString().slice(0, 10);
+      saveAs(blob, `clientes_tallermotos_${today}.xlsx`);
 
-      // Espera visual bonita
       await this.delay(1200);
 
-      this.showExportCustomersModal = false;
       this.exportSuccessMessage = `Se exportaron ${this.customers.length} clientes correctamente.`;
-      this.showExportSuccessModal = true;
-    } catch (error) {
-      console.error('Error exportando clientes:', error);
-
+      this.exportCustomersStatus = 'success';
+      this.cdr.detectChanges();
+    } catch {
       await this.delay(800);
 
-      this.showExportCustomersModal = false;
-      this.exportErrorMessage =
-        'No se pudo generar el archivo Excel. Intenta nuevamente.';
-      this.showExportErrorModal = true;
-    } finally {
-      this.isExportingCustomers = false;
+      this.exportErrorMessage = 'No se pudo generar el archivo Excel. Intenta nuevamente.';
+      this.exportCustomersStatus = 'error';
       this.cdr.detectChanges();
     }
   }
@@ -627,6 +628,31 @@ export class DashboardCustomers implements OnInit {
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  private getRequestErrorMessage(error: unknown, fallback: string): string {
+    if (this.isRecord(error)) {
+      const errorBody = error['error'];
+
+      if (typeof errorBody === 'string') {
+        return errorBody;
+      }
+
+      if (this.isRecord(errorBody) && typeof errorBody['message'] === 'string') {
+        return errorBody['message'];
+      }
+
+      if (typeof error['message'] === 'string') {
+        return error['message'];
+      }
+    }
+
+    return fallback;
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+  }
+
   private getTodayFileName(): string {
     const date = new Date();
 
