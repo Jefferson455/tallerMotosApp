@@ -1,3 +1,10 @@
+<app-exportdataexcel [show]="showExportBikesModal" [status]="exportBikesStatus" [itemCount]="bikes.length"
+  itemName="motos" title="¿Exportar motos?" successTitle="Excel generado correctamente" errorTitle="No se pudo exportar"
+  warningMessage="El archivo incluirá la información básica de las motos y su cliente asociado."
+  [successMessage]="exportSuccessMessage" [errorMessage]="exportErrorMessage" confirmButtonText="Sí, exportar"
+  loadingButtonText="Exportando..." cancelButtonText="Cancelar" successButtonText="Perfecto" errorButtonText="Entendido"
+  (closeModal)="closeExportBikesModal()" (confirmExport)="confirmExportBikes()">
+</app-exportdataexcel>
 <section class="bikes-header">
   <div>
     <p class="bikes-header__eyebrow">Motos</p>
@@ -6,7 +13,9 @@
   </div>
 
   <div class="bikes-header__actions">
-    <button class="btn-light" type="button">Exportar</button>
+    <button class="btn-light" type="button" (click)="openExportBikesModal()">
+      Exportar
+    </button>
     <button class="btn-main" type="button">Nueva moto</button>
   </div>
 </section>
@@ -19,7 +28,7 @@
 
   <article class="mini-stat">
     <span>Clientes asociados</span>
-    <h3>{{ asocciatedCustomers }}</h3>
+    <h3>{{ associatedCustomers }}</h3>
   </article>
 </section>
 
