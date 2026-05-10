@@ -6,3 +6,10 @@ export interface Bike {
   clienteId?: number;
   nombreCliente?: string;
 }
+
+export interface BikeCreateRequest {
+  marca: string;
+  modelo: string;
+  placa: string;
+  clienteId: number;
+}

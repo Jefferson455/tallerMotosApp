@@ -1,27 +1,54 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Bike } from '../../../core/interfaces/bike.interface';
+import { Bike, BikeCreateRequest } from '../../../core/interfaces/bike.interface';
 import { BikesService } from '../../../core/services/bikes.service';
 import { Customer } from '../../../core/interfaces/customer.interface';
 import { Exportdataexcel, ExportModalStatus } from '../../shared/exportdataexcel/exportdataexcel';
 
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { CustomerService } from '../../../core/services/customer.service';
+import { FormsModule } from '@angular/forms';
+
+//* type for mapping the data for new bike
+type NewBikeErrors = {
+  placa?: string;
+  marca?: string;
+  modelo?: string;
+  clienteId?: string;
+}
 
 @Component({
   selector: 'app-dashboard-bikes',
-  imports: [Exportdataexcel],
+  imports: [Exportdataexcel, FormsModule],
   templateUrl: './dashboard-bikes.html',
   styleUrl: './dashboard-bikes.scss',
 })
 export class DashboardBikes implements OnInit {
 
   private bikeService = inject(BikesService);
+  private customerService = inject(CustomerService)
   private cdr = inject(ChangeDetectorRef);
 
   bikes: Bike[] = [];
+  customers: Customer[] = [];
+
   isLoading = true;
   errorMessage = '';
+
+  showNewBikeModal = false;
+  isSavingBike = false;
+  newBikeFormSubmitted = false;
+  newBikeErrorMessage = '';
+
+  newBikeForm = {
+    placa: '',
+    marca: '',
+    modelo: '',
+    clienteId: null as number | null,
+  };
+
+  newBikeErrors: NewBikeErrors = {};
 
   //* Variables to excel
   showExportBikesModal = false;
@@ -31,8 +58,48 @@ export class DashboardBikes implements OnInit {
 
   ngOnInit(): void {
     this.loadBikes();
+    this.loadCustomers();
   }
 
+  //* Method for call the form to insert the data
+  openNewBikeModal(): void {
+    this.showNewBikeModal = true;
+    this.isSavingBike = false;
+    this.newBikeFormSubmitted = false;
+    this.newBikeErrorMessage = '';
+
+    this.newBikeForm = {
+      placa: '',
+      marca: '',
+      modelo: '',
+      clienteId: null,
+    };
+
+    this.newBikeErrors = {
+      placa: '',
+      marca: '',
+      modelo: '',
+      clienteId: '',
+    };
+
+    if (this.customers.length === 0) {
+      this.loadCustomers();
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  //* Method for close the form
+  closeNewBikeModal(): void {
+    if (this.isSavingBike) return;
+
+    this.showNewBikeModal = false;
+    this.newBikeErrorMessage = '';
+    this.newBikeFormSubmitted = false;
+    this.newBikeErrors = {};
+  }
+
+  //* Method for load the bikes in the table
   loadBikes(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -51,6 +118,63 @@ export class DashboardBikes implements OnInit {
       },
     });
   }
+
+  //* Method for load the customers in the select form
+  loadCustomers(): void {
+    this.customerService.getClientes().subscribe({
+      next: (data) => {
+        console.log('Clientes para select:', data);
+        this.customers = data;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error cargando clientes:', error);
+        this.customers = [];
+        this.cdr.detectChanges();
+      },
+    });
+  }
+  //* Method for save the data and insert into DB
+  saveNewBike(): void {
+    this.newBikeFormSubmitted = true;
+    this.newBikeErrorMessage = '';
+    this.newBikeErrors = this.validateNewBikeForm();
+
+    if (Object.keys(this.newBikeErrors).some((key) => this.newBikeErrors[key as keyof typeof this.newBikeErrors])) {
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const payload: BikeCreateRequest = {
+      placa: this.newBikeForm.placa.trim().toUpperCase(),
+      marca: this.capitalizeFirstLetter(this.newBikeForm.marca.trim()),
+      modelo: this.newBikeForm.modelo.trim(),
+      clienteId: Number(this.newBikeForm.clienteId),
+    };
+
+    this.isSavingBike = true;
+    this.cdr.detectChanges();
+
+    this.bikeService.createBike(payload).subscribe({
+      next: (response) => {
+        console.log('Moto creada:', response);
+
+        this.isSavingBike = false;
+        this.closeNewBikeModal();
+        this.loadBikes();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error creando moto:', error);
+
+        this.isSavingBike = false;
+        this.newBikeErrorMessage = 'No se pudo registrar la moto. Revisa los datos e intenta nuevamente.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+
 
   //* Call the modal export to excel
   openExportBikesModal(): void {
@@ -153,6 +277,61 @@ export class DashboardBikes implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  //* Method for validate the inputs values
+  private validateNewBikeForm(): NewBikeErrors {
+    const errors: NewBikeErrors = {};
+
+    const placa = this.newBikeForm.placa.trim().toUpperCase();
+    const marca = this.newBikeForm.marca.trim();
+    const modelo = this.newBikeForm.modelo.trim();
+    const clienteId = this.newBikeForm.clienteId;
+
+    const placaMotoColombiaRegex = /^[A-Z]{3}\d{2}[A-Z]$/;
+
+    if (!placa) {
+      errors.placa = 'La placa es obligatoria.';
+    } else if (!placaMotoColombiaRegex.test(placa)) {
+      errors.placa = 'La placa debe tener formato de moto. Ej: ABC12D.';
+    }
+
+    if (!marca) {
+      errors.marca = 'La marca es obligatoria.';
+    }
+
+    if (!modelo) {
+      errors.modelo = 'El modelo es obligatorio.';
+    }
+
+    if (!clienteId) {
+      errors.clienteId = 'Debes seleccionar un cliente.';
+    }
+
+    return errors;
+  }
+
+  //* Regex for placa
+  onBikePlacaInput(): void {
+    this.newBikeForm.placa = this.newBikeForm.placa
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 6);
+  }
+
+  //* Regex for Marca
+  onBikeMarcaInput(): void {
+    this.newBikeForm.marca = this.capitalizeFirstLetter(this.newBikeForm.marca);
+  }
+
+  //* To capitalizer the first leter of Marca
+  private capitalizeFirstLetter(value: string): string {
+    const cleanValue = value.trimStart();
+
+    if (!cleanValue) return '';
+
+    return cleanValue.charAt(0).toUpperCase() + cleanValue.slice(1);
+  }
+
+  //* Method for get bikes associated with his self customers
   get associatedCustomers(): number {
     const clientes = this.bikes
       .map((bike) => bike.clienteId ?? bike.nombreCliente)
