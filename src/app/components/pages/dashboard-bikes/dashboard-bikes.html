@@ -88,6 +88,9 @@
               <button class="btn-action btn-action--edit" type="button" (click)="editarMoto(bike)">
                 Editar
               </button>
+              <button type="button" class="btn-action btn-action--delete" (click)="deleteBike(bike)">
+                Eliminar
+              </button>
             </div>
           </td>
         </tr>
@@ -205,6 +208,39 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal de eliminar  -->
+@if (showDeleteBikeModal && bikeToDelete) {
+<div class="delete-modal-backdrop" (click)="closeDeleteBikeModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon">
+      <i class="fa-solid fa-trash"></i>
+    </div>
+
+    <h3>¿Eliminar Moto?</h3>
+
+    <p>
+      Estás a punto de eliminar a
+      <strong>{{ bikeToDelete.placa }}</strong>.
+      Esta acción no se puede deshacer.
+    </p>
+
+    <div class="delete-modal__warning">
+      Por favor revisa antes de confirmar la eliminación.
+    </div>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-cancel" (click)="closeDeleteBikeModal()" [disabled]="isDeletingBike">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-delete-confirm" (click)="confirmDeleteBike()" [disabled]="isDeletingBike">
+        {{ isDeletingBike ? 'Eliminando...' : 'Sí, eliminar' }}
+      </button>
     </div>
   </div>
 </div>

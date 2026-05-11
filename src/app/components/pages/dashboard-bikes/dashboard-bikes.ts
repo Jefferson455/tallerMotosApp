@@ -41,6 +41,11 @@ export class DashboardBikes implements OnInit {
   newBikeFormSubmitted = false;
   newBikeErrorMessage = '';
 
+  bikeToDelete: Bike | null = null;
+  showDeleteBikeModal = false;
+
+  isDeletingBike = false;
+
   newBikeForm = {
     placa: '',
     marca: '',
@@ -125,6 +130,23 @@ export class DashboardBikes implements OnInit {
     });
   }
 
+  //* Method for call the modal to delete the bike
+  deleteBike(bike: Bike): void {
+    this.bikeToDelete = bike;
+    this.showDeleteBikeModal = true;
+  }
+
+  closeDeleteBikeModal(): void {
+    if (this.isDeletingBike) return;
+    this.showDeleteBikeModal = false;
+    this.bikeToDelete = null;
+    this.cdr.detectChanges();
+  }
+
+  confirmDeleteBike(): void {
+    console.log("Metodo que se implementará para borrar la moto");
+  }
+
   //* Method for load the customers in the select form
   loadCustomers(): void {
     this.customerService.getClientes().subscribe({
@@ -140,6 +162,7 @@ export class DashboardBikes implements OnInit {
       },
     });
   }
+
   //* Method for save the data and insert into DB
   saveNewBike(): void {
     this.newBikeFormSubmitted = true;
@@ -179,8 +202,6 @@ export class DashboardBikes implements OnInit {
       },
     });
   }
-
-
 
   //* Call the modal export to excel
   openExportBikesModal(): void {
