@@ -26,6 +26,8 @@ export class Asidebar implements OnInit {
   rolUser = 'Cargando rol...';
   showLogoutModal = false;
 
+  isMobileSidebarOpen = false;
+
   private mapearRol(nombreRol: string): string {
     const rolesMap: Record<string, string> = {
       ADMIN: 'Administrador',
@@ -86,5 +88,18 @@ export class Asidebar implements OnInit {
   confirmLogout(): void {
     this.showLogoutModal = false;
     this.authService.logout();
+  }
+
+  //* Methods for turn responsive in mobile
+  openMobileSidebar(): void {
+    this.isMobileSidebarOpen = true;
+  }
+
+  closeMobileSidebar(): void {
+    this.isMobileSidebarOpen = false;
+  }
+
+  toggleMobileSidebar(): void {
+    this.isMobileSidebarOpen = !this.isMobileSidebarOpen;
   }
 }
