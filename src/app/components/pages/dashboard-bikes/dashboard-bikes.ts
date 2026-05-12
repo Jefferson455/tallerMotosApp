@@ -48,22 +48,21 @@ export class DashboardBikes implements OnInit {
   newBikeFormSubmitted = false;
   newBikeErrorMessage = '';
 
-  //* Variables to delete one bike
-  bikeToDelete: Bike | null = null;
-  showDeleteBikeModal = false;
-  isDeletingBike = false;
-
   //* Variables for modal "ver"
   selectedBike: Bike | null = null;
   showBikeDetailModal = false;
 
-  //* Model for insert new bike
-  newBikeForm = {
-    placa: '',
-    marca: '',
-    modelo: '',
-    clienteId: null as number | null,
-  };
+  //* Variables for modal "edit"
+  bikeToEdit: Bike | null = null;
+  showEditBikeModal = false;
+  isUpdatingBike = false;
+  editBikeFormSubmitted = false;
+  editBikeErrorMessage = '';
+
+  //* Variables to "delete" one bike
+  bikeToDelete: Bike | null = null;
+  showDeleteBikeModal = false;
+  isDeletingBike = false;
 
   //* variables to take the errors
   newBikeErrors: NewBikeErrors = {};
@@ -78,6 +77,27 @@ export class DashboardBikes implements OnInit {
   selectedBikeServices: Service[] = [];
   isLoadingBikeServices = false;
   bikeServicesErrorMessage = '';
+
+  //* Model for insert new bike
+  newBikeForm = {
+    placa: '',
+    marca: '',
+    modelo: '',
+    clienteId: null as number | null,
+  };
+
+  //* Model for edit the bike
+  editBikeForm = {
+    placa: '',
+    marca: '',
+    modelo: '',
+  };
+  //* Model for edit the bike - take the errors
+  editBikeErrors = {
+    placa: '',
+    marca: '',
+    modelo: '',
+  };
 
   ngOnInit(): void {
     this.loadBikes();
@@ -170,7 +190,6 @@ export class DashboardBikes implements OnInit {
   loadCustomers(): void {
     this.customerService.getClientes().subscribe({
       next: (data) => {
-        console.log('Clientes para select:', data);
         this.customers = data;
         this.cdr.detectChanges();
       },
@@ -205,7 +224,6 @@ export class DashboardBikes implements OnInit {
 
     this.bikeService.createBike(payload).subscribe({
       next: (response) => {
-        console.log('Moto creada:', response);
 
         this.isSavingBike = false;
         this.closeNewBikeModal();
@@ -412,7 +430,93 @@ export class DashboardBikes implements OnInit {
 
   //* Method to edit the bike
   editBike(bike: Bike): void {
-    console.log('Editar moto:', bike);
+    this.bikeToEdit = bike;
+
+    this.editBikeForm = {
+      placa: bike.placa || '',
+      marca: bike.marca || '',
+      modelo: bike.modelo || '',
+    };
+
+    this.editBikeErrors = {
+      placa: '',
+      marca: '',
+      modelo: '',
+    };
+
+    this.editBikeErrorMessage = '';
+    this.editBikeFormSubmitted = false;
+    this.showEditBikeModal = true;
+
+    this.cdr.detectChanges();
+  }
+
+  //* Method to save the edit of the bike
+  saveEditBike(): void {
+    if (!this.bikeToEdit) return;
+
+    this.editBikeFormSubmitted = true;
+    this.editBikeErrorMessage = '';
+    this.editBikeErrors = this.validateEditBikeForm();
+
+    if (Object.values(this.editBikeErrors).some((error) => error)) {
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const payload = {
+      marca: this.capitalizeFirstLetter(this.editBikeForm.marca.trim()),
+      modelo: this.editBikeForm.modelo.trim(),
+      placa: this.editBikeForm.placa.trim().toUpperCase(),
+    };
+
+    this.isUpdatingBike = true;
+    this.cdr.detectChanges();
+
+    this.bikeService.updateBike(this.bikeToEdit.id, payload).subscribe({
+      next: (response) => {
+
+        this.isUpdatingBike = false;
+        this.closeEditBikeModal();
+        this.closeBikeDetailModal();
+        this.loadBikes();
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error actualizando moto:', error);
+
+        this.isUpdatingBike = false;
+        this.editBikeErrorMessage =
+          error?.error || 'No se pudo actualizar la moto. Revisa los datos e intenta nuevamente.';
+
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  //* Method to close the modal edit bike
+  closeEditBikeModal(): void {
+    if (this.isUpdatingBike) return;
+
+    this.showEditBikeModal = false;
+    this.bikeToEdit = null;
+    this.editBikeErrorMessage = '';
+    this.editBikeFormSubmitted = false;
+
+    this.editBikeErrors = {
+      placa: '',
+      marca: '',
+      modelo: '',
+    };
+
+    this.editBikeForm = {
+      placa: '',
+      marca: '',
+      modelo: '',
+    };
+
+    this.cdr.detectChanges();
   }
 
   //* Method to load the rol of the user
@@ -435,9 +539,6 @@ export class DashboardBikes implements OnInit {
         : this.rolId === 2
           ? 'Mecánico'
           : 'Sin rol';
-
-      console.log('Rol ID:', this.rolId);
-      console.log('Rol mapeado:', this.rolUser);
     } catch (error) {
       console.error('Error leyendo usuario desde localStorage:', error);
       this.rolUser = 'Sin rol';
@@ -490,5 +591,49 @@ export class DashboardBikes implements OnInit {
       currency: 'COP',
       maximumFractionDigits: 0,
     }).format(value || 0);
+  }
+
+  //* Method for validate placa for edit modal
+  onEditBikePlacaInput(): void {
+    this.editBikeForm.placa = this.editBikeForm.placa
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 6);
+  }
+
+  //* Method for validate marca for edit modal
+  onEditBikeMarcaInput(): void {
+    this.editBikeForm.marca = this.capitalizeFirstLetter(this.editBikeForm.marca);
+  }
+
+  //* Method for group all validations before insert the edit bike
+  private validateEditBikeForm(): typeof this.editBikeErrors {
+    const errors = {
+      placa: '',
+      marca: '',
+      modelo: '',
+    };
+
+    const placa = this.editBikeForm.placa.trim().toUpperCase();
+    const marca = this.editBikeForm.marca.trim();
+    const modelo = this.editBikeForm.modelo.trim();
+
+    const placaRegex = /^[A-Z]{3}[0-9]{2}[A-Z0-9]$/;
+
+    if (!placa) {
+      errors.placa = 'La placa es obligatoria.';
+    } else if (!placaRegex.test(placa)) {
+      errors.placa = 'Ingresa una placa válida. Ej: ABC12D.';
+    }
+
+    if (!marca) {
+      errors.marca = 'La marca es obligatoria.';
+    }
+
+    if (!modelo) {
+      errors.modelo = 'El modelo es obligatorio.';
+    }
+
+    return errors;
   }
 }

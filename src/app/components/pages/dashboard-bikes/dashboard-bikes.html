@@ -334,6 +334,98 @@
 </div>
 }
 
+<!--! Modal for edit bike -->
+@if (showEditBikeModal && bikeToEdit) {
+<div class="customer-modal-backdrop" (click)="closeEditBikeModal()">
+  <div class="customer-modal customer-modal--large" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Editar moto</p>
+        <h3>{{ bikeToEdit.placa }}</h3>
+        <span>Actualiza la información básica de la motocicleta.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeEditBikeModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <form class="customer-form">
+        <div class="customer-form__grid">
+          <div class="form-group">
+            <label for="editBikePlaca">Placa</label>
+            <input id="editBikePlaca" type="text" placeholder="Ej. ABC12D" maxlength="6"
+              [(ngModel)]="editBikeForm.placa" name="editBikePlaca" (input)="onEditBikePlacaInput()"
+              [class.input-error]="editBikeFormSubmitted && editBikeErrors.placa" />
+
+            @if (editBikeFormSubmitted && editBikeErrors.placa) {
+            <small class="field-error">{{ editBikeErrors.placa }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="editBikeMarca">Marca</label>
+            <input id="editBikeMarca" type="text" placeholder="Ej. Yamaha" [(ngModel)]="editBikeForm.marca"
+              name="editBikeMarca" (input)="onEditBikeMarcaInput()"
+              [class.input-error]="editBikeFormSubmitted && editBikeErrors.marca" />
+
+            @if (editBikeFormSubmitted && editBikeErrors.marca) {
+            <small class="field-error">{{ editBikeErrors.marca }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="editBikeModelo">Modelo</label>
+            <input id="editBikeModelo" type="text" placeholder="Ej. MT-15" [(ngModel)]="editBikeForm.modelo"
+              name="editBikeModelo" [class.input-error]="editBikeFormSubmitted && editBikeErrors.modelo" />
+
+            @if (editBikeFormSubmitted && editBikeErrors.modelo) {
+            <small class="field-error">{{ editBikeErrors.modelo }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Cliente asociado</label>
+            <input type="text" [value]="bikeToEdit.nombreCliente || 'Sin cliente asociado'" disabled />
+          </div>
+        </div>
+
+        <div class="bike-form-preview">
+          <div class="bike-form-preview__icon">
+            <i class="fa-solid fa-motorcycle"></i>
+          </div>
+
+          <div>
+            <strong>{{ editBikeForm.marca || 'Marca de la moto' }}</strong>
+            <span>
+              {{ editBikeForm.modelo || 'Modelo' }} ·
+              {{ editBikeForm.placa || 'Placa' }}
+            </span>
+          </div>
+        </div>
+
+        @if (editBikeErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ editBikeErrorMessage }}
+        </div>
+        }
+
+        <div class="customer-modal__actions">
+          <button type="button" class="btn-cancel" (click)="closeEditBikeModal()" [disabled]="isUpdatingBike">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-save" (click)="saveEditBike()" [disabled]="isUpdatingBike">
+            {{ isUpdatingBike ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+}
+
 <!--! Modal to delete bike  -->
 @if (showDeleteBikeModal && bikeToDelete) {
 <div class="delete-modal-backdrop" (click)="closeDeleteBikeModal()">
