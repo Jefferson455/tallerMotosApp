@@ -458,3 +458,49 @@
   </div>
 </div>
 }
+
+<!--! Modal success to delete bike  -->
+@if (showDeleteBikeSuccessModal) {
+<div class="delete-modal-backdrop" (click)="closeDeleteBikeSuccessModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon delete-modal__icon--success">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <h3>Moto eliminada</h3>
+
+    <p>
+      {{ deleteBikeSuccessMessage }}
+    </p>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-confirm--success" (click)="closeDeleteBikeSuccessModal()">
+        Perfecto
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal error to delete bike  -->
+@if (showDeleteBikeErrorModal) {
+<div class="delete-modal-backdrop" (click)="closeDeleteBikeErrorModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon">
+      <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
+
+    <h3>No se pudo eliminar</h3>
+
+    <p>
+      {{ deleteBikeErrorMessage }}
+    </p>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-confirm" (click)="closeDeleteBikeErrorModal()">
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+}

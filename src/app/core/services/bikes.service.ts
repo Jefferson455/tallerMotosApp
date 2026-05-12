@@ -42,4 +42,17 @@ export class BikesService {
       responseType: 'text',
     });
   }
+
+  deleteBike(id: number): Observable<string> {
+    const token = localStorage.getItem('token') || '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      headers,
+      responseType: 'text',
+    });
+  }
 }

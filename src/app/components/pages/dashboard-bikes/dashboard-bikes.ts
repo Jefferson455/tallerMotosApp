@@ -63,6 +63,10 @@ export class DashboardBikes implements OnInit {
   bikeToDelete: Bike | null = null;
   showDeleteBikeModal = false;
   isDeletingBike = false;
+  showDeleteBikeSuccessModal = false;
+  deleteBikeSuccessMessage = '';
+  showDeleteBikeErrorModal = false;
+  deleteBikeErrorMessage = '';
 
   //* variables to take the errors
   newBikeErrors: NewBikeErrors = {};
@@ -173,17 +177,61 @@ export class DashboardBikes implements OnInit {
   deleteBike(bike: Bike): void {
     this.bikeToDelete = bike;
     this.showDeleteBikeModal = true;
+    this.cdr.detectChanges();
   }
 
   closeDeleteBikeModal(): void {
     if (this.isDeletingBike) return;
+
     this.showDeleteBikeModal = false;
     this.bikeToDelete = null;
     this.cdr.detectChanges();
   }
 
   confirmDeleteBike(): void {
-    console.log("Metodo que se implementará para borrar la moto");
+    if (!this.bikeToDelete) return;
+
+    this.isDeletingBike = true;
+    this.cdr.detectChanges();
+
+    this.bikeService.deleteBike(this.bikeToDelete.id).subscribe({
+      next: (response) => {
+
+        const deletedPlate = this.bikeToDelete?.placa || 'la moto';
+
+        this.isDeletingBike = false;
+        this.showDeleteBikeModal = false;
+        this.bikeToDelete = null;
+
+        this.deleteBikeSuccessMessage = `La moto ${deletedPlate} fue eliminada correctamente.`;
+        this.showDeleteBikeSuccessModal = true;
+
+        this.loadBikes();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.isDeletingBike = false;
+        this.showDeleteBikeModal = false;
+
+        this.deleteBikeErrorMessage =
+          error?.error || 'No se pudo eliminar la moto. Intenta nuevamente.';
+
+        this.showDeleteBikeErrorModal = true;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  closeDeleteBikeSuccessModal(): void {
+    this.showDeleteBikeSuccessModal = false;
+    this.deleteBikeSuccessMessage = '';
+    this.cdr.detectChanges();
+  }
+
+  closeDeleteBikeErrorModal(): void {
+    this.showDeleteBikeErrorModal = false;
+    this.deleteBikeErrorMessage = '';
+    this.cdr.detectChanges();
   }
 
   //* Method for load the customers in the select form
