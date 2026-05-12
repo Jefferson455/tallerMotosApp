@@ -6,7 +6,9 @@
   </div>
 
   <div class="services-header__actions">
+    @if (rolUser == "Administrador") {
     <button class="btn-light" type="button">Exportar</button>
+    }
     <button class="btn-main" type="button">Nuevo servicio</button>
   </div>
 </section>

@@ -13,12 +13,14 @@
   </div>
 
   <div class="bikes-header__actions">
+    @if (isAdmin) {
     <button class="btn-light" type="button" (click)="openExportBikesModal()">
       Exportar
     </button>
     <button class="btn-main" type="button" (click)="openNewBikeModal()">
       Nueva moto
     </button>
+    }
   </div>
 </section>
 
@@ -85,12 +87,14 @@
               <button class="btn-action btn-action--view" type="button" (click)="verDetalle(bike)">
                 Ver
               </button>
+              @if (isAdmin) {
               <button class="btn-action btn-action--edit" type="button" (click)="editarMoto(bike)">
                 Editar
               </button>
               <button type="button" class="btn-action btn-action--delete" (click)="deleteBike(bike)">
                 Eliminar
               </button>
+              }
             </div>
           </td>
         </tr>

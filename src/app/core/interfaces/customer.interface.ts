@@ -19,3 +19,11 @@ export interface updateCustomerRequest {
   correo: string;
   documento: string;
 }
+
+export interface UsuarioStorage {
+  id: number;
+  nombre: string;
+  username: string;
+  rolId: number;
+}
+

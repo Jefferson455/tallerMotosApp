@@ -2,13 +2,13 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Bike, BikeCreateRequest } from '../../../core/interfaces/bike.interface';
 import { BikesService } from '../../../core/services/bikes.service';
-import { Customer } from '../../../core/interfaces/customer.interface';
+import { Customer, UsuarioStorage } from '../../../core/interfaces/customer.interface';
 import { Exportdataexcel, ExportModalStatus } from '../../shared/exportdataexcel/exportdataexcel';
-
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule } from '@angular/forms';
+import { Rol, RolService } from '../../../core/services/rol.service';
 
 //* type for mapping the data for new bike
 type NewBikeErrors = {
@@ -29,6 +29,10 @@ export class DashboardBikes implements OnInit {
   private bikeService = inject(BikesService);
   private customerService = inject(CustomerService)
   private cdr = inject(ChangeDetectorRef);
+
+  rolUser = '';
+  rolId: number | null = null;
+
 
   bikes: Bike[] = [];
   customers: Customer[] = [];
@@ -64,6 +68,7 @@ export class DashboardBikes implements OnInit {
   ngOnInit(): void {
     this.loadBikes();
     this.loadCustomers();
+    this.loadUserRole();
   }
 
   //* Method for call the form to insert the data
@@ -373,6 +378,39 @@ export class DashboardBikes implements OnInit {
 
   editarMoto(bike: Bike): void {
     console.log('Editar moto:', bike);
+  }
+
+  get isAdmin(): boolean {
+    return Number(this.rolId) === 1;
+  }
+
+  private loadUserRole(): void {
+    try {
+      const usuarioGuardado = localStorage.getItem('usuario');
+
+      if (!usuarioGuardado) {
+        this.rolUser = 'Sin rol';
+        this.rolId = null;
+        return;
+      }
+
+      const usuario: UsuarioStorage = JSON.parse(usuarioGuardado);
+
+      this.rolId = Number(usuario.rolId);
+
+      this.rolUser = this.rolId === 1
+        ? 'Administrador'
+        : this.rolId === 2
+          ? 'Mecánico'
+          : 'Sin rol';
+
+      console.log('Rol ID:', this.rolId);
+      console.log('Rol mapeado:', this.rolUser);
+    } catch (error) {
+      console.error('Error leyendo usuario desde localStorage:', error);
+      this.rolUser = 'Sin rol';
+      this.rolId = null;
+    }
   }
 
 }

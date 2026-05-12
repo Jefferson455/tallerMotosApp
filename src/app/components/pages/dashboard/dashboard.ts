@@ -10,6 +10,27 @@ import { Asidebar } from "../../shared/asidebar/asidebar";
   styleUrl: './dashboard.scss',
 })
 
-export class Dashboard {
+export class Dashboard implements OnInit {
 
+  rolUser = '';
+  ngOnInit(): void {
+    this.loadUserSession();
+  }
+  private loadUserSession(): void {
+    const userStorage = localStorage.getItem('usuario');
+
+    if (!userStorage) {
+      this.rolUser = '';
+      return;
+    }
+
+    const user = JSON.parse(userStorage);
+
+    this.rolUser =
+      user.rolNombre ||
+      user.rol ||
+      user.role ||
+      user.nombreRol ||
+      '';
+  }
 }
