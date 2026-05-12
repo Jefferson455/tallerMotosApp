@@ -84,11 +84,11 @@
           <td>{{ bike.nombreCliente || 'Sin cliente' }}</td>
           <td>
             <div class="actions-box">
-              <button class="btn-action btn-action--view" type="button" (click)="verDetalle(bike)">
+              <button class="btn-action btn-action--view" type="button" (click)="viewBikeDetail(bike)">
                 Ver
               </button>
               @if (isAdmin) {
-              <button class="btn-action btn-action--edit" type="button" (click)="editarMoto(bike)">
+              <button class="btn-action btn-action--edit" type="button" (click)="editBike(bike)">
                 Editar
               </button>
               <button type="button" class="btn-action btn-action--delete" (click)="deleteBike(bike)">
@@ -112,6 +112,123 @@
   </div>
   }
 </section>
+
+<!--! Modal bike details -->
+@if (showBikeDetailModal && selectedBike) {
+<div class="customer-modal-backdrop" (click)="closeBikeDetailModal()">
+  <div class="customer-modal bike-detail-modal" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Detalle de la moto</p>
+        <h3>{{ selectedBike.marca || 'Moto registrada' }}</h3>
+        <span>Información completa de la motocicleta y su cliente asociado.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeBikeDetailModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <div class="detail-grid">
+        <article class="detail-card">
+          <span>ID moto</span>
+          <strong>{{ selectedBike.id }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Placa</span>
+          <strong>{{ selectedBike.placa || 'Sin placa' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Marca</span>
+          <strong>{{ selectedBike.marca || 'Sin marca' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Modelo</span>
+          <strong>{{ selectedBike.modelo || 'Sin modelo' }}</strong>
+        </article>
+
+
+        <article class="detail-card">
+          <span>Cliente asociado</span>
+          <strong>{{ selectedBike.nombreCliente || 'Sin cliente asociado' }}</strong>
+        </article>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section__header">
+          <div>
+            <h4>Servicios realizados</h4>
+            <p>Historial de servicios registrados para esta motocicleta.</p>
+          </div>
+        </div>
+
+        @if (isLoadingBikeServices) {
+        <div class="state-box">
+          Cargando servicios de la moto...
+        </div>
+        }
+
+        @if (!isLoadingBikeServices && bikeServicesErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ bikeServicesErrorMessage }}
+        </div>
+        }
+
+        @if (!isLoadingBikeServices && !bikeServicesErrorMessage && selectedBikeServices.length > 0) {
+        <div class="services-detail-list">
+          @for (service of selectedBikeServices; track service.id) {
+          <article class="service-detail-card">
+            <div class="service-detail-card__icon">
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+            </div>
+
+            <div class="service-detail-card__content">
+              <h5>{{ service.descripcion || 'Servicio sin descripción' }}</h5>
+
+              <p>
+                {{ formatMoney(service.precio) }}
+              </p>
+
+              <span>
+                Moto: {{ service.motoPlaca || selectedBike.placa || 'Sin placa' }}
+              </span>
+
+              <small>
+                Realizado por:
+                {{ service.usuarioNombre || 'Usuario no definido' }}
+              </small>
+            </div>
+          </article>
+          }
+        </div>
+        }
+
+        @if (!isLoadingBikeServices && !bikeServicesErrorMessage && selectedBikeServices.length === 0) {
+        <div class="state-box">
+          Esta moto todavía no tiene servicios registrados.
+        </div>
+        }
+      </div>
+
+      <div class="customer-modal__actions">
+        <button type="button" class="btn-cancel" (click)="closeBikeDetailModal()">
+          Cerrar
+        </button>
+
+        @if (isAdmin) {
+        <button type="button" class="btn-save" (click)="editBike(selectedBike)">
+          Editar moto
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}
 
 <!--! Modal for insert the new Bike  -->
 @if (showNewBikeModal) {
@@ -217,7 +334,7 @@
 </div>
 }
 
-<!--! Modal de eliminar  -->
+<!--! Modal to delete bike  -->
 @if (showDeleteBikeModal && bikeToDelete) {
 <div class="delete-modal-backdrop" (click)="closeDeleteBikeModal()">
   <div class="delete-modal" (click)="$event.stopPropagation()">

@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Bike, BikeCreateRequest } from '../../../core/interfaces/bike.interface';
 import { BikesService } from '../../../core/services/bikes.service';
 import { Customer, UsuarioStorage } from '../../../core/interfaces/customer.interface';
@@ -8,8 +7,8 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule } from '@angular/forms';
-import { Rol, RolService } from '../../../core/services/rol.service';
-
+import { Service } from '../../../core/interfaces/service.interface';
+import { ServicesService } from '../../../core/services/services.service';
 //* type for mapping the data for new bike
 type NewBikeErrors = {
   placa?: string;
@@ -29,27 +28,36 @@ export class DashboardBikes implements OnInit {
   private bikeService = inject(BikesService);
   private customerService = inject(CustomerService)
   private cdr = inject(ChangeDetectorRef);
+  private servicesService = inject(ServicesService);
 
+  //* Variables to validate the rol
   rolUser = '';
   rolId: number | null = null;
 
-
+  //* Variables to load bikes
   bikes: Bike[] = [];
   customers: Customer[] = [];
 
+  //* Variables to validate if is load the data in the table
   isLoading = true;
   errorMessage = '';
 
+  //* Variables to load modal "Nueva moto"
   showNewBikeModal = false;
   isSavingBike = false;
   newBikeFormSubmitted = false;
   newBikeErrorMessage = '';
 
+  //* Variables to delete one bike
   bikeToDelete: Bike | null = null;
   showDeleteBikeModal = false;
-
   isDeletingBike = false;
 
+  //* Variables for modal "ver"
+  selectedBike: Bike | null = null;
+  showBikeDetailModal = false;
+
+  //* Model for insert new bike
   newBikeForm = {
     placa: '',
     marca: '',
@@ -57,6 +65,7 @@ export class DashboardBikes implements OnInit {
     clienteId: null as number | null,
   };
 
+  //* variables to take the errors
   newBikeErrors: NewBikeErrors = {};
 
   //* Variables to excel
@@ -64,6 +73,11 @@ export class DashboardBikes implements OnInit {
   exportBikesStatus: ExportModalStatus = 'confirm';
   exportSuccessMessage = '';
   exportErrorMessage = '';
+
+  //* Variables to load services
+  selectedBikeServices: Service[] = [];
+  isLoadingBikeServices = false;
+  bikeServicesErrorMessage = '';
 
   ngOnInit(): void {
     this.loadBikes();
@@ -124,7 +138,7 @@ export class DashboardBikes implements OnInit {
         console.error('Error cargando motos:', error);
 
         if (error.status === 401) {
-          this.errorMessage = 'Tu sesión expiró o no tienes autorización. Inicia sesión nuevamente.';
+          this.errorMessage = 'Tal vez tu sesión expiró, inicia sesión nuevamente.';
         } else {
           this.errorMessage = 'No se pudieron cargar las motos.';
         }
@@ -372,18 +386,36 @@ export class DashboardBikes implements OnInit {
     return new Set(clientes).size;
   }
 
-  verDetalle(bike: Bike): void {
-    console.log('Ver detalle moto:', bike);
+  //* Method to see the details, button "ver", open modal.
+  viewBikeDetail(bike: Bike): void {
+    this.selectedBike = bike;
+    this.showBikeDetailModal = true;
+
+    this.selectedBikeServices = [];
+    this.bikeServicesErrorMessage = '';
+
+    this.loadBikeServices(bike);
+
+    this.cdr.detectChanges();
   }
 
-  editarMoto(bike: Bike): void {
+  //* Method to close the modal bikedetails
+  closeBikeDetailModal(): void {
+    this.showBikeDetailModal = false;
+    this.selectedBike = null;
+    this.selectedBikeServices = [];
+    this.bikeServicesErrorMessage = '';
+    this.isLoadingBikeServices = false;
+
+    this.cdr.detectChanges();
+  }
+
+  //* Method to edit the bike
+  editBike(bike: Bike): void {
     console.log('Editar moto:', bike);
   }
 
-  get isAdmin(): boolean {
-    return Number(this.rolId) === 1;
-  }
-
+  //* Method to load the rol of the user
   private loadUserRole(): void {
     try {
       const usuarioGuardado = localStorage.getItem('usuario');
@@ -413,4 +445,50 @@ export class DashboardBikes implements OnInit {
     }
   }
 
+  //* Method to parse and validate rol
+  get isAdmin(): boolean {
+    return Number(this.rolId) === 1;
+  }
+
+  //* Method to load services
+  private loadBikeServices(bike: Bike): void {
+    this.isLoadingBikeServices = true;
+    this.bikeServicesErrorMessage = '';
+    this.selectedBikeServices = [];
+
+    this.servicesService.getServices().subscribe({
+      next: (services) => {
+        const bikeId = Number(bike.id);
+        const bikePlate = (bike.placa || '').trim().toUpperCase();
+
+        this.selectedBikeServices = services.filter((service) => {
+          const serviceMotoId = Number(service.motoId);
+          const servicePlate = (service.motoPlaca || '').trim().toUpperCase();
+
+          return serviceMotoId === bikeId || servicePlate === bikePlate;
+        });
+
+        this.isLoadingBikeServices = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error cargando servicios de la moto:', error);
+
+        this.bikeServicesErrorMessage =
+          'No se pudieron cargar los servicios realizados a esta moto.';
+
+        this.isLoadingBikeServices = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  //* Method for format the price of the service
+  formatMoney(value: number): string {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0,
+    }).format(value || 0);
+  }
 }
