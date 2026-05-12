@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ServicesService } from '../../../core/services/services.service';
 import { Service } from '../../../core/interfaces/service.interface';
 import { CommonModule } from '@angular/common';
+import { UsuarioStorage } from '../../../core/interfaces/customer.interface';
 
 @Component({
   selector: 'app-dashboard-services',
@@ -17,8 +18,12 @@ export class DashboardServices implements OnInit {
   isLoading = true;
   errorMessage = '';
 
+  rolUser = '';
+  rolId: number | null = null;
+
   ngOnInit(): void {
     this.loadServices();
+    this.loadUserRole();
   }
 
   loadServices(): void {
@@ -51,5 +56,38 @@ export class DashboardServices implements OnInit {
 
   editarServicio(service: Service): void {
     console.log('Editar servicio:', service);
+  }
+
+  get isAdmin(): boolean {
+    return Number(this.rolId) === 1;
+  }
+
+  private loadUserRole(): void {
+    try {
+      const usuarioGuardado = localStorage.getItem('usuario');
+
+      if (!usuarioGuardado) {
+        this.rolUser = 'Sin rol';
+        this.rolId = null;
+        return;
+      }
+
+      const usuario: UsuarioStorage = JSON.parse(usuarioGuardado);
+
+      this.rolId = Number(usuario.rolId);
+
+      this.rolUser = this.rolId === 1
+        ? 'Administrador'
+        : this.rolId === 2
+          ? 'Mecánico'
+          : 'Sin rol';
+
+      console.log('Rol ID:', this.rolId);
+      console.log('Rol mapeado:', this.rolUser);
+    } catch (error) {
+      console.error('Error leyendo usuario desde localStorage:', error);
+      this.rolUser = 'Sin rol';
+      this.rolId = null;
+    }
   }
 }

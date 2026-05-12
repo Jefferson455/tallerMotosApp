@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Bike, BikeCreateRequest } from '../interfaces/bike.interface';
+import { Bike, BikeCreateRequest, BikeUpdateRequest } from '../interfaces/bike.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -28,5 +28,31 @@ export class BikesService {
     });
 
     return this.http.post(this.apiUrl, payload, { headers });
+  }
+
+  updateBike(id: number, payload: BikeUpdateRequest): Observable<string> {
+    const token = localStorage.getItem('token') || '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.put(`${this.apiUrl}/${id}`, payload, {
+      headers,
+      responseType: 'text',
+    });
+  }
+
+  deleteBike(id: number): Observable<string> {
+    const token = localStorage.getItem('token') || '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      headers,
+      responseType: 'text',
+    });
   }
 }

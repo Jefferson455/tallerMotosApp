@@ -197,6 +197,16 @@
   }
 }
 
+.btn-action--delete {
+  background: #ffeded;
+  color: #f92d16;
+
+  &:hover {
+    background: #ffd6d5;
+    transform: translateY(-1px);
+  }
+}
+
 .bikes-table {
   width: 100%;
   border-collapse: collapse;
@@ -707,13 +717,253 @@
   transform: none;
 }
 
-@media (max-width: 768px) {
-  .detail-grid {
-    grid-template-columns: 1fr;
+/* ===== DELETE MODAL ===== */
+.delete-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 1rem;
+}
+
+.delete-modal {
+  width: 100%;
+  max-width: 430px;
+  background: #ffffff;
+  border-radius: 26px;
+  padding: 2rem 1.6rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  text-align: center;
+  animation: modalFadeIn 0.22s ease;
+  font-family: v.$font-exo;
+
+  &__icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, v.$color-danger, v.$color-secondary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    box-shadow: 0 14px 26px rgba(249, 115, 22, 0.25);
+  }
+
+  h3 {
+    margin: 0 0 0.55rem;
+    font-size: 1.45rem;
+    color: #1f2937;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.96rem;
+    line-height: 1.65;
+
+    strong {
+      color: #111827;
+      font-weight: 800;
+    }
+  }
+
+  &__warning {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    background: #fff7ed;
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    color: #9a3412;
+    font-size: 0.85rem;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    margin-top: 1.6rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
   }
 }
 
+.btn-delete-cancel,
+.btn-delete-confirm,
+.btn-delete-confirm--success {
+  min-width: 140px;
+  height: 46px;
+  border-radius: 14px;
+  font-family: v.$font-exo;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btn-delete-cancel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+
+  &:hover:not(:disabled) {
+    background: #f9fafb;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-delete-confirm {
+  border: none;
+  color: #ffffff;
+  background: linear-gradient(135deg, v.$color-danger, v.$color-secondary);
+  box-shadow: 0 12px 24px rgba(249, 115, 22, 0.22);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 28px rgba(249, 115, 22, 0.28);
+  }
+}
+
+.btn-delete-confirm--success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 14px 26px rgba(34, 197, 94, 0.25);
+  border: none;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 28px rgba(34, 197, 94, 0.25);
+  }
+}
+
+.bike-detail-modal {
+  max-width: 900px;
+}
+
+.bike-detail-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(249, 115, 22, 0.1));
+  border: 1px solid rgba(249, 115, 22, 0.16);
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: #ffffff;
+    color: v.$color-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  h5 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0.15rem 0;
+    color: #374151;
+    font-weight: 700;
+  }
+
+  span,
+  small {
+    display: block;
+    color: #6b7280;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+}
+
+.services-detail-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.service-detail-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(249, 115, 22, 0.1));
+  border: 1px solid rgba(249, 115, 22, 0.16);
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    background: #ffffff;
+    color: v.$color-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  &__content {
+    min-width: 0;
+  }
+
+  h5 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0.15rem 0;
+    color: #374151;
+    font-weight: 800;
+  }
+
+  span,
+  small {
+    display: block;
+    color: #6b7280;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+}
+
+.delete-modal__icon--success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 14px 26px rgba(34, 197, 94, 0.25);
+}
+
 @media (max-width: 768px) {
+  .service-detail-card {
+    align-items: flex-start;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
   .bikes-header {
     flex-direction: column;
   }
@@ -721,5 +971,9 @@
   .bikes-stats,
   .customer-form__grid {
     grid-template-columns: 1fr;
+  }
+
+  .bike-detail-card {
+    align-items: flex-start;
   }
 }

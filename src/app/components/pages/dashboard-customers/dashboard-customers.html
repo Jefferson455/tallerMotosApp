@@ -367,8 +367,7 @@
         <div class="motos-detail-list">
           @for (moto of selectedCustomer.motos; track moto.id) {
           <article class="moto-detail-card">
-            <div class="moto-detail-card__icon">🏍️</div>
-
+            <div class="moto-detail-card__icon"><i class="fa-solid fa-motorcycle"></i></div>
             <div>
               <h5>{{ moto.marca || 'Marca sin definir' }}</h5>
               <p>{{ moto.modelo || 'Modelo sin definir' }}</p>

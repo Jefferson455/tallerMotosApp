@@ -13,3 +13,9 @@ export interface BikeCreateRequest {
   placa: string;
   clienteId: number;
 }
+
+export interface BikeUpdateRequest {
+  marca: string;
+  modelo: string;
+  placa: string;
+}

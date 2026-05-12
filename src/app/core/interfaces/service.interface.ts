@@ -4,6 +4,6 @@ export interface Service {
   precio: number;
   motoId: number;
   motoPlaca: string;
-  usuarioId: number;
-  usuarioNombre: string;
+  usuarioId?: number;
+  usuarioNombre?: string;
 }

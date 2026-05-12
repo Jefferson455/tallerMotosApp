@@ -13,12 +13,14 @@
   </div>
 
   <div class="bikes-header__actions">
+    @if (isAdmin) {
     <button class="btn-light" type="button" (click)="openExportBikesModal()">
       Exportar
     </button>
     <button class="btn-main" type="button" (click)="openNewBikeModal()">
       Nueva moto
     </button>
+    }
   </div>
 </section>
 
@@ -82,12 +84,17 @@
           <td>{{ bike.nombreCliente || 'Sin cliente' }}</td>
           <td>
             <div class="actions-box">
-              <button class="btn-action btn-action--view" type="button" (click)="verDetalle(bike)">
+              <button class="btn-action btn-action--view" type="button" (click)="viewBikeDetail(bike)">
                 Ver
               </button>
-              <button class="btn-action btn-action--edit" type="button" (click)="editarMoto(bike)">
+              @if (isAdmin) {
+              <button class="btn-action btn-action--edit" type="button" (click)="editBike(bike)">
                 Editar
               </button>
+              <button type="button" class="btn-action btn-action--delete" (click)="deleteBike(bike)">
+                Eliminar
+              </button>
+              }
             </div>
           </td>
         </tr>
@@ -105,6 +112,123 @@
   </div>
   }
 </section>
+
+<!--! Modal bike details -->
+@if (showBikeDetailModal && selectedBike) {
+<div class="customer-modal-backdrop" (click)="closeBikeDetailModal()">
+  <div class="customer-modal bike-detail-modal" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Detalle de la moto</p>
+        <h3>{{ selectedBike.marca || 'Moto registrada' }}</h3>
+        <span>Información completa de la motocicleta y su cliente asociado.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeBikeDetailModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <div class="detail-grid">
+        <article class="detail-card">
+          <span>ID moto</span>
+          <strong>{{ selectedBike.id }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Placa</span>
+          <strong>{{ selectedBike.placa || 'Sin placa' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Marca</span>
+          <strong>{{ selectedBike.marca || 'Sin marca' }}</strong>
+        </article>
+
+        <article class="detail-card">
+          <span>Modelo</span>
+          <strong>{{ selectedBike.modelo || 'Sin modelo' }}</strong>
+        </article>
+
+
+        <article class="detail-card">
+          <span>Cliente asociado</span>
+          <strong>{{ selectedBike.nombreCliente || 'Sin cliente asociado' }}</strong>
+        </article>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section__header">
+          <div>
+            <h4>Servicios realizados</h4>
+            <p>Historial de servicios registrados para esta motocicleta.</p>
+          </div>
+        </div>
+
+        @if (isLoadingBikeServices) {
+        <div class="state-box">
+          Cargando servicios de la moto...
+        </div>
+        }
+
+        @if (!isLoadingBikeServices && bikeServicesErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ bikeServicesErrorMessage }}
+        </div>
+        }
+
+        @if (!isLoadingBikeServices && !bikeServicesErrorMessage && selectedBikeServices.length > 0) {
+        <div class="services-detail-list">
+          @for (service of selectedBikeServices; track service.id) {
+          <article class="service-detail-card">
+            <div class="service-detail-card__icon">
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+            </div>
+
+            <div class="service-detail-card__content">
+              <h5>{{ service.descripcion || 'Servicio sin descripción' }}</h5>
+
+              <p>
+                {{ formatMoney(service.precio) }}
+              </p>
+
+              <span>
+                Moto: {{ service.motoPlaca || selectedBike.placa || 'Sin placa' }}
+              </span>
+
+              <small>
+                Realizado por:
+                {{ service.usuarioNombre || 'Usuario no definido' }}
+              </small>
+            </div>
+          </article>
+          }
+        </div>
+        }
+
+        @if (!isLoadingBikeServices && !bikeServicesErrorMessage && selectedBikeServices.length === 0) {
+        <div class="state-box">
+          Esta moto todavía no tiene servicios registrados.
+        </div>
+        }
+      </div>
+
+      <div class="customer-modal__actions">
+        <button type="button" class="btn-cancel" (click)="closeBikeDetailModal()">
+          Cerrar
+        </button>
+
+        @if (isAdmin) {
+        <button type="button" class="btn-save" (click)="editBike(selectedBike)">
+          Editar moto
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}
 
 <!--! Modal for insert the new Bike  -->
 @if (showNewBikeModal) {
@@ -205,6 +329,177 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal for edit bike -->
+@if (showEditBikeModal && bikeToEdit) {
+<div class="customer-modal-backdrop" (click)="closeEditBikeModal()">
+  <div class="customer-modal customer-modal--large" (click)="$event.stopPropagation()">
+    <div class="customer-modal__header">
+      <div>
+        <p class="customer-modal__eyebrow">Editar moto</p>
+        <h3>{{ bikeToEdit.placa }}</h3>
+        <span>Actualiza la información básica de la motocicleta.</span>
+      </div>
+
+      <button type="button" class="customer-modal__close" (click)="closeEditBikeModal()">
+        ✕
+      </button>
+    </div>
+
+    <div class="customer-modal__body">
+      <form class="customer-form">
+        <div class="customer-form__grid">
+          <div class="form-group">
+            <label for="editBikePlaca">Placa</label>
+            <input id="editBikePlaca" type="text" placeholder="Ej. ABC12D" maxlength="6"
+              [(ngModel)]="editBikeForm.placa" name="editBikePlaca" (input)="onEditBikePlacaInput()"
+              [class.input-error]="editBikeFormSubmitted && editBikeErrors.placa" />
+
+            @if (editBikeFormSubmitted && editBikeErrors.placa) {
+            <small class="field-error">{{ editBikeErrors.placa }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="editBikeMarca">Marca</label>
+            <input id="editBikeMarca" type="text" placeholder="Ej. Yamaha" [(ngModel)]="editBikeForm.marca"
+              name="editBikeMarca" (input)="onEditBikeMarcaInput()"
+              [class.input-error]="editBikeFormSubmitted && editBikeErrors.marca" />
+
+            @if (editBikeFormSubmitted && editBikeErrors.marca) {
+            <small class="field-error">{{ editBikeErrors.marca }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="editBikeModelo">Modelo</label>
+            <input id="editBikeModelo" type="text" placeholder="Ej. MT-15" [(ngModel)]="editBikeForm.modelo"
+              name="editBikeModelo" [class.input-error]="editBikeFormSubmitted && editBikeErrors.modelo" />
+
+            @if (editBikeFormSubmitted && editBikeErrors.modelo) {
+            <small class="field-error">{{ editBikeErrors.modelo }}</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Cliente asociado</label>
+            <input type="text" [value]="bikeToEdit.nombreCliente || 'Sin cliente asociado'" disabled />
+          </div>
+        </div>
+
+        <div class="bike-form-preview">
+          <div class="bike-form-preview__icon">
+            <i class="fa-solid fa-motorcycle"></i>
+          </div>
+
+          <div>
+            <strong>{{ editBikeForm.marca || 'Marca de la moto' }}</strong>
+            <span>
+              {{ editBikeForm.modelo || 'Modelo' }} ·
+              {{ editBikeForm.placa || 'Placa' }}
+            </span>
+          </div>
+        </div>
+
+        @if (editBikeErrorMessage) {
+        <div class="state-box state-box--error">
+          {{ editBikeErrorMessage }}
+        </div>
+        }
+
+        <div class="customer-modal__actions">
+          <button type="button" class="btn-cancel" (click)="closeEditBikeModal()" [disabled]="isUpdatingBike">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-save" (click)="saveEditBike()" [disabled]="isUpdatingBike">
+            {{ isUpdatingBike ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal to delete bike  -->
+@if (showDeleteBikeModal && bikeToDelete) {
+<div class="delete-modal-backdrop" (click)="closeDeleteBikeModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon">
+      <i class="fa-solid fa-trash"></i>
+    </div>
+
+    <h3>¿Eliminar Moto?</h3>
+
+    <p>
+      Estás a punto de eliminar a
+      <strong>{{ bikeToDelete.placa }}</strong>.
+      Esta acción no se puede deshacer.
+    </p>
+
+    <div class="delete-modal__warning">
+      Por favor revisa antes de confirmar la eliminación.
+    </div>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-cancel" (click)="closeDeleteBikeModal()" [disabled]="isDeletingBike">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-delete-confirm" (click)="confirmDeleteBike()" [disabled]="isDeletingBike">
+        {{ isDeletingBike ? 'Eliminando...' : 'Sí, eliminar' }}
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal success to delete bike  -->
+@if (showDeleteBikeSuccessModal) {
+<div class="delete-modal-backdrop" (click)="closeDeleteBikeSuccessModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon delete-modal__icon--success">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <h3>Moto eliminada</h3>
+
+    <p>
+      {{ deleteBikeSuccessMessage }}
+    </p>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-confirm--success" (click)="closeDeleteBikeSuccessModal()">
+        Perfecto
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!--! Modal error to delete bike  -->
+@if (showDeleteBikeErrorModal) {
+<div class="delete-modal-backdrop" (click)="closeDeleteBikeErrorModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-modal__icon">
+      <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
+
+    <h3>No se pudo eliminar</h3>
+
+    <p>
+      {{ deleteBikeErrorMessage }}
+    </p>
+
+    <div class="delete-modal__actions">
+      <button type="button" class="btn-delete-confirm" (click)="closeDeleteBikeErrorModal()">
+        Entendido
+      </button>
     </div>
   </div>
 </div>
