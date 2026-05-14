@@ -1,9 +1,12 @@
 export interface Service {
   id: number;
   descripcion: string;
-  precio: number;
+  costo: number;
+  estado: string;
+  fecha: string;
+  kilometraje: string;
   motoId: number;
   motoPlaca: string;
+  nombreUsuario?: string;
   usuarioId?: number;
-  usuarioNombre?: string;
 }

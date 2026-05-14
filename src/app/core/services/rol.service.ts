@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { env } from '../../../env/env';
 export interface Rol {
   id: number;
   nombre: string;
@@ -11,7 +12,7 @@ export interface Rol {
 })
 export class RolService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://tallermotosapi.somee.com/api/roles';
+  private apiUrl = env.apiUrl;
 
   getRoles(): Observable<Rol[]> {
     const token = localStorage.getItem('token') || '';
@@ -20,6 +21,6 @@ export class RolService {
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get<Rol[]>(this.apiUrl, { headers });
+    return this.http.get<Rol[]>(`${this.apiUrl}/roles`, { headers });
   }
 }

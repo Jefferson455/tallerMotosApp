@@ -9,6 +9,7 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule } from '@angular/forms';
 import { Service } from '../../../core/interfaces/service.interface';
 import { ServicesService } from '../../../core/services/services.service';
+import { CommonModule } from '@angular/common';
 //* type for mapping the data for new bike
 type NewBikeErrors = {
   placa?: string;
@@ -19,7 +20,7 @@ type NewBikeErrors = {
 
 @Component({
   selector: 'app-dashboard-bikes',
-  imports: [Exportdataexcel, FormsModule],
+  imports: [Exportdataexcel, FormsModule, CommonModule],
   templateUrl: './dashboard-bikes.html',
   styleUrl: './dashboard-bikes.scss',
 })
