@@ -52,14 +52,15 @@
     <table class="services-table">
       <thead>
         <tr>
-          <th>ID</th>
+          <th>No</th>
           <th>Descripción</th>
           <th>Moto</th>
           <th>Técnico</th>
-          <th>Precio</th>
+          <th>Estado</th>
           <th>Acciones</th>
         </tr>
       </thead>
+
 
       <tbody>
         @for (service of services; track service.id) {
@@ -69,12 +70,13 @@
           <td>
             <span class="plate-badge">{{ service.motoPlaca }}</span>
           </td>
-          <td>{{ service.usuarioNombre }}</td>
-          <td>
+          <td>{{ service.nombreUsuario}}</td>
+          <td>{{ service.estado }}</td>
+          <!-- <td>
             <span class="price-badge">
-              {{ service.precio | currency:'COP':'symbol-narrow':'1.0-0' }}
+              {{ service.costo | currency:'COP':'symbol-narrow':'1.0-0' }}
             </span>
-          </td>
+          </td> -->
           <td>
             <div class="actions-box">
               <button class="btn-action btn-action--view" type="button" (click)="verDetalle(service)">
@@ -96,6 +98,7 @@
         </tr>
         }
       </tbody>
+
     </table>
   </div>
   }
