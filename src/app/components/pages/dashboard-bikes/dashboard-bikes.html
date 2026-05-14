@@ -190,16 +190,19 @@
               <h5>{{ service.descripcion || 'Servicio sin descripción' }}</h5>
 
               <p>
-                {{ formatMoney(service.precio) }}
+                {{ formatMoney(service.costo) }}
               </p>
 
               <span>
                 Moto: {{ service.motoPlaca || selectedBike.placa || 'Sin placa' }}
               </span>
+              <span>
+                Fecha servicio: {{ service.fecha | date:'medium':'GMT' }}
+              </span>
 
               <small>
                 Realizado por:
-                {{ service.usuarioNombre || 'Usuario no definido' }}
+                {{ service.nombreUsuario || 'Usuario no definido' }}
               </small>
             </div>
           </article>
