@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Customer, updateCustomerRequest } from '../interfaces/customer.interface';
 import { Observable } from 'rxjs';
+import { env } from '../../../env/env';
 
 export interface MotoCreateRequest {
   marca: string;
@@ -23,11 +24,10 @@ export interface ClienteMotoCreateRequest {
 })
 export class CustomerService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://tallermotosapi.somee.com/api/clientes';
+  private apiUrl = env.apiUrl;
 
   getClientes(): Observable<Customer[]> {
     const token = localStorage.getItem('token') || '';
-
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
@@ -37,47 +37,43 @@ export class CustomerService {
 
   getCustomersBikes(): Observable<Customer[]> {
     const token = localStorage.getItem('token') || '';
-
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get<Customer[]>(`${this.apiUrl}/Motos`, { headers });
+    return this.http.get<Customer[]>(`${this.apiUrl}/Clientes/Motos`, { headers });
   }
 
   crearClienteConMotos(payload: ClienteMotoCreateRequest): Observable<any> {
     const token = localStorage.getItem('token') || '';
-
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.post(`${this.apiUrl}/Motos`, payload, { headers });
+    return this.http.post(`${this.apiUrl}/Clientes/Motos`, payload, { headers });
   }
 
   updateCustomer(id: number, payload: updateCustomerRequest): Observable<string> {
     const token = localStorage.getItem('token') || '';
-
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.put(`${this.apiUrl}/${id}`, payload, {
+    return this.http.put(`${this.apiUrl}/Clientes/${id}`, payload, {
       headers,
       responseType: 'text',
     });
   }
 
   deleteCustomer(id: number): Observable<string> {
-  const token = localStorage.getItem('token') || '';
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
 
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`,
-  });
-
-  return this.http.delete(`${this.apiUrl}/${id}`, {
-    headers,
-    responseType: 'text',
-  });
-}
+    return this.http.delete(`${this.apiUrl}/Clientes/${id}`, {
+      headers,
+      responseType: 'text',
+    });
+  }
 }
