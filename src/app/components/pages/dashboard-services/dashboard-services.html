@@ -1,3 +1,11 @@
+<app-exportdataexcel [show]="showExportServicesModal" [status]="exportServicesStatus" [itemCount]="services.length"
+  itemName="servicios" title="¿Exportar servicios?" successTitle="Excel generado correctamente"
+  errorTitle="No se pudo exportar"
+  warningMessage="El archivo incluirá la información básica de los servicios y su tecnico asociado."
+  [successMessage]="exportSuccessMessage" [errorMessage]="exportErrorMessage" confirmButtonText="Sí, exportar"
+  loadingButtonText="Exportando..." cancelButtonText="Cancelar" successButtonText="Perfecto" errorButtonText="Entendido"
+  (closeModal)="closeExportServicesModal()" (confirmExport)="confirmExportServices()">
+</app-exportdataexcel>
 <section class="services-header">
   <div>
     <p class="services-header__eyebrow">Servicios</p>
@@ -7,7 +15,9 @@
 
   <div class="services-header__actions">
     @if (isAdmin) {
-    <button class="btn-light" type="button">Exportar</button>
+    <button class="btn-light" type="button" (click)="openExportServicesModal()">
+      Exportar
+    </button>
     }
     <button class="btn-main" type="button">Nuevo servicio</button>
   </div>
